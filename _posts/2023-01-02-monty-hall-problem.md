@@ -66,22 +66,17 @@ For the not-monty hall problem:
 
 def not_monty_hall_sim():
 	doors = ['a','b','c']
-
 	#Let the prize be randomly chosen
 	prize = random.choice( doors )
-
 	#Your randomly chosen initial guess
 	contestant_choice = random.choice(doors)
-
 	#Host randomly choosing one of the remaining doors.
 	host_choice = random.choice(list(filter(lambda x:x!=contestant_choice, doors)))
-
 	#This is to satify the conditional information given to us.
 	# since we know that when the host choice was revealed it was not the prize doors
 	if (  host_choice == prize ):
 		# Abort the simulation
 		return (0,0)
-	
 	#Returing the output, the first index is if the inital guess was correct, and the second index is if this is a valid iteration. 
 	if 	contestant_choice != prize:
 		return (1 , 1)
@@ -96,23 +91,18 @@ For the standard monty hall problem
 {% highlight python %}
 def monty_hall_sim():
 	doors = ['a','b','c']
-
 	#Let the prize be randomly chosen
 	prize = random.choice( doors )
-
 	#Your randomly chosen initial guess
 	contestant_choice = random.choice(doors)
-
 	#Host randomly choosing one of the remaining doors, which is not the prize door
  	#Since, host is aware of the prize door and is deliberately choosing one that is not the prize door.
 	host_choice = random.choice(list(filter(lambda x:x!=contestant_choice and x!= prize, doors)))
-
 	#This is to satify the conditional statement given to us.
  	# since we know that when the host choice was revealed it was not the prize doors
 	if (  host_choice == prize ):
 		# Abort the simulation
 		return [0,0]
-	
 	#Returing the output, the first index is if the inital guess was correct, and the second index is if this is a valid iteration. 
 	if 	contestant_choice != prize:
 		return [1 , 1]
@@ -120,9 +110,7 @@ def monty_hall_sim():
 		return [0 , 1]	
 {%endhighlight%}
 
-
-
-The above simulation a large number of times to convince of correct probabilities.
+Run the above simulation a large number of times to convince of correct probabilities.
 
 {% highlight python %}
 ans = [0,0]
