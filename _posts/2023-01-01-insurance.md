@@ -1,5 +1,5 @@
 ---
-title: "What is Insurance? A mathematical model"
+title: "Insurance? A Dummy example"
 permalink: "/Insurance/"
 layout: page
 mathjax: true
@@ -57,21 +57,3 @@ This phenomenon is understood by the "Law of Diminishing Marginal Utility" which
 <br />
 
 In slightly different words, an insurance service could be considered a courier service to send money from your more prosperous future to a your less prosperous future.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
