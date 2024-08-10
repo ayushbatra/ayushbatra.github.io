@@ -1,5 +1,5 @@
 ---
-title: "MultiArmedBandits Stochastic, Adversarial, and Adversarially Corrupted Stochastic"
+title: "MultiArmedBandits with Stochastic, Adversarial, and Adversarially Corrupted Stochastic Rewards"
 permalink: "/MultiArmedBandits/"
 layout: page
 mathjax: true
