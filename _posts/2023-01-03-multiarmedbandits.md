@@ -5,6 +5,10 @@ layout: page
 mathjax: true
 ---
 
+The multi-armed bandit (MAB) is a classic problem in probability theory and statistics that models decision-making scenarios where you need to choose between different options with uncertain rewards. This article will discuss some known algorithms in MAB in stochastically chosen, adversarially chosen and stochastically chosen but strategically corrupted rewards scenarios and run simulation for the algorithms discussed.
+
+
+
 
 The Monty Hall Problem is one of the most nefarious problems in stochastic mathematical modelling. It is a simple looking problem that perplexes most people when confronted with its dilemma. This article will try to generalize the MHP on how the host of the show chooses his door to better understand the problem.
 
