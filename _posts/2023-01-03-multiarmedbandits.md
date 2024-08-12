@@ -1,7 +1,7 @@
 ---
 title: "MultiArmedBandits with Stochastic, Adversarial, and Adversarially Corrupted Stochastic Rewards"
 permalink: "/MultiArmedBandits/"
-layout: page
+layout: post
 mathjax: true
 ---
 
@@ -11,14 +11,14 @@ The multi-armed bandit (MAB) is a classic problem in probability theory and stat
 &nbsp;
 Stochastic bandits are type of problem in which the reward of different actions are unrelated to each other, and the rewards of the same action at different time steps are an i.i.d distribution. 
 | **Protocol:** |
-|----------|
+|------------------|
 | ***Parameters***: $$K$$ arms, $$T$$ rounds, $$T > K$$ , for each arm $$a \in [K]$$, the reward for arm $$a$$ is drawn from distribution $$X_a$$. |
 |For each round $$n \in [T]$$ the algorithm chooses an $$a_t\in[K]$$ and observes a reward $$r_t$$ sampled from $$X_a$$|
 
 The aim of the algorithm is to minimize the deficit suffered from not always choosing the arm, with the highest total expected reward.
 Let this deficit be Pseudo-Regret, be defined as: 
 $$$
-R = \max_{a\in [k]} \mathbb{E}\Big[\sum_{i\in[T]}X_a - \sum_{i\in[T]}r_i\Big]
+R = \max_{a\in [k]} \mathbb{E}\Big[\sum_{i\in[T]}X_a - \sum_{i\in[T]}X_{a_t}\Big]
 $$$
 
 
