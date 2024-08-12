@@ -16,10 +16,22 @@ Stochastic bandits are type of problem in which the reward of different actions 
 |For each round $$n \in [T]$$ the algorithm chooses an $$a_t\in[K]$$ and observes a reward $$r_t$$ sampled from $$X_a$$|
 
 The aim of the algorithm is to minimize the deficit suffered from not always choosing the arm, with the highest total expected reward.
-Let this deficit be Pseudo-Regret, be defined as: 
+Lets define this deficit as Pseudo-Regret, as: 
 $$$
 R = \max_{a\in [k]} \mathbb{E}\Big[\sum_{i\in[T]}X_a - \sum_{i\in[T]}X_{a_t}\Big]
 $$$
+
+For the purpose of this article, let's assume that all stochastic rewards are drawn from Normal Distribution with mean between 0 and 1.
+Also, lets assume that the rewards are capped between -5 and 6.
+the rewards are drawn from Normal Distribution with mean between 0 and 1 and also the rewards are capped at -5 and 6. 
+
+<sub><sup>Note: the probabilty that $$N(0,1) \in [-5,5] is > 10^6$$, so we can assume properties for both bounded and normal distribution as when required.</sub></sup>
+
+###### Explore-then-commit:
+
+Let's start with a simple algorithm, explore arms uniformly selecting each action $$N$$ times the commiting to the best arm for the remaining rounds.
+
+
 
 
 
