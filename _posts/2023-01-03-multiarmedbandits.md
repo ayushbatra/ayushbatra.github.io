@@ -7,11 +7,19 @@ mathjax: true
 
 The multi-armed bandit (MAB) is a classic problem in probability theory and statistics that models exploitation-exploration trade-off, leveraging choices that have proven effective in the past versus choosing new options that might provide better-unexplored trade-offs. Imagine a row of slot machines, each with a different and unknown distribution of paying out a reward. The goal is to select the arm of a machine at each time instance such that it maximizes the total reward over time. This article will discuss some known algorithms in MAB in stochastically chosen, adversarially chosen, and stochastically chosen but strategically corrupted reward scenarios and run simulations for the algorithms discussed.
 
-##### Stochastic Rewards:
+##### Stochastic Bandits:
 &nbsp;
-Consider
+Stochastic bandits are type of problem in which the reward of different actions are unrelated to each other, and the rewards of the same action at different time steps are an i.i.d distribution. 
+| **Protocol:** |
+|----------|
+| ***Parameters***: $$K$$ arms, $$T$$ rounds, $$T > K$$ , for each arm $$a \in [K]$$, the reward for arm $$a$$ is drawn from distribution $$X_a$$. |
+|For each round $$n \in [T]$$ the algorithm chooses an $$a_t\in[K]$$ and observes a reward $$r_t$$ sampled from $$X_a$$|
 
-
+The aim of the algorithm is to minimize the deficit suffered from not always choosing the arm, with the highest total expected reward.
+Let this deficit be Pseudo-Regret, be defined as: 
+$$$
+R = \max_{a\in [k]} \mathbb{E}\Big[\sum_{i\in[T]}X_a - \sum_{i\in[T]}r_i\Big]
+$$$
 
 
 
