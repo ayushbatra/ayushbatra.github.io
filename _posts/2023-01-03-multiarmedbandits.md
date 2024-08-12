@@ -12,8 +12,8 @@ The multi-armed bandit (MAB) is a classic problem in probability theory and stat
 Stochastic bandits are type of problem in which the reward of different actions are unrelated to each other, and the rewards of the same action at different time steps are an i.i.d distribution. 
 | **Protocol:** |
 |------------------|
-| ***Parameters***: $$K$$ arms, $$T$$ rounds, $$T > K$$ , for each arm $$a \in [K]$$, the reward for arm $$a$$ is drawn from distribution $$X_a$$. |
-|For each round $$n \in [T]$$ the algorithm chooses an $$a_t\in[K]$$ and observes a reward $$r_t$$ sampled from $$X_a$$|
+| ***Parameters***: $$K$$ arms, $$T$$ rounds, $$T > K$$ , for each arm $$a \in [K]$$, the reward for arm $$a$$ is drawn from distribution $$D_a$$. |
+|For each round $$n \in [T]$$ the algorithm chooses an $$a_t\in[K]$$ and observes a reward $$X_{a_t,t}$$ |
 
 The aim of the algorithm is to minimize the deficit suffered from not always choosing the arm, with the highest total expected reward.
 Lets define this deficit as Pseudo-Regret, as: 
@@ -23,13 +23,42 @@ $$$
 
 For the purpose of this article, let's assume that all stochastic rewards are drawn from Normal Distribution with mean between 0 and 1.
 Also, lets assume that the rewards are capped between -5 and 6.
-the rewards are drawn from Normal Distribution with mean between 0 and 1 and also the rewards are capped at -5 and 6. 
 
-<sub><sup>Note: the probabilty that $$N(0,1) \in [-5,5] is > 10^6$$, so we can assume properties for both bounded and normal distribution as when required.</sub></sup>
+<!--<sub><sup>Note: the probabilty that $$N(0,1) \in [-5,5] is > 10^6$$, so we can assume properties for both bounded and normal distribution as when required.</sub></sup>-->
 
 ###### Explore-then-commit:
 
-Let's start with a simple algorithm, explore arms uniformly selecting each action $$N$$ times the commiting to the best arm for the remaining rounds.
+Let's start with a simple algorithm: explore arms uniformly selecting each action $$N$$ times *(exploration phase)* the commiting to the best arm for the remaining $$T-N$$ rounds *(exploitation phase)*.
+This simple looking algorithm suffers from sub-linear i.e. o(T) regret.
+From [Hoeffding's inequality](https://en.wikipedia.org/wiki/Hoeffding%27s_inequality), we can infer that if $$N$$ is chosen large enough, then the mean reward for each arm estimated by sampling in the exploration phase is almost equal to the true mean reward of the arm. 
+Let $$\mu_a$$ be true mean of arm $$a$$ and $$\overline{\mu}_{a}$$ be the mean estimated by sampling. Then,
+$$\implies\mathbb{P}\big[ | \mu - \overline{\mu}_a | < \delta \big] \geq 1 - e^{\frac{-2\delta^2}{N\cdot(6 - (-5 )^2)}} = 1 - e^{\frac{-2\delta^2}{N\cdot121}}$$
+<!--Let $$\delta = \sqrt{\frac{2\cdot log(T)}{N}}$$-->
+The the total regret suffered by the algorithm is the regret suffered in exploration phase + regret suffered in exploitation phase. The regret in any 1 round of exploration phase is bounded by the limits of rewards distribution *[6 - (-5)]* and with probability $$1 - e^{\frac{-2\delta^2}{N\cdot121}}$$ is no more than $$2\delta$$ and with probability $$e^{\frac{-2\delta^2}{N\cdot121}}$$ bounded by the limit of rewards distribution *[6 - (-5)]*
+$$\implies R \leq N\cdot K\cdot 11 + (1 - e^{\frac{-2\delta^2}{N\cdot121}})\cdot2\delta + e^{\frac{-2\delta^2}{N\cdot121}}\cdot 11$$
+ to minimize the above equation we can assume $$N$$ to be $$O\big((\frac{T^2\log T}{K^2})^\frac{1}{3}\big)$$ and  $$\delta$$ to be $$O\big(\sqrt{ \frac{2\log(T)}{N} }\big)$$
+$$\implies R = O\big( T^{\frac{2}{3}}K^\frac{1}{3}(\log T)^\frac{1}{3} \big)$$
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
