@@ -7,8 +7,20 @@ mathjax: true
 
 The multi-armed bandit (MAB) is a classic problem in probability theory and statistics that models exploitation-exploration trade-off, leveraging choices that have proven effective in the past versus choosing new options that might provide better-unexplored trade-offs. Imagine a row of slot machines, each with a different and unknown distribution of paying out a reward. The goal is to select the arm of a machine at each time instance such that it maximizes the total reward over time. This article will discuss some known algorithms in MAB in stochastically chosen, adversarially chosen, and stochastically chosen but strategically corrupted reward scenarios and run simulations for the algorithms discussed.
 
-##### Stochastic Bandits:
+Notations used:
++ $$k$$ : number of arms / actions
++ $$[K]$$: the set all arms/actions
++ $$a \in K$$: a unique arm/action
++ $$T$$: total number of rounds
++ $$t \in [T]$$: a specific round
++ $$a_t$$ : arm chosen in round $$t$$
++ $$X_{a\in [K],t\in [T]}$$: reward for arm $$a$$ in round $$t$$ 
++ $$\Delta_{a,t}$$: is the difference between the reward of optimal arm and arm $$a$$ in round $$t$$.
++ $$n_t(a)$$: is the number of pulls of arm $$a$$ upto round $$t$$.
+
 &nbsp;
+#### Stochastic Bandits:
+
 Stochastic bandits are type of problem in which the reward of different actions are unrelated to each other, and the rewards of the same action at different time steps are an i.i.d distribution. 
 | **Protocol:** |
 |------------------|
@@ -18,7 +30,7 @@ Stochastic bandits are type of problem in which the reward of different actions 
 The aim of the algorithm is to minimize the deficit suffered from not always choosing the arm, with the highest total expected reward.
 Lets define this deficit as Pseudo-Regret, as: 
 $$$
-R = \max_{a\in [k]} \mathbb{E}\Big[\sum_{i\in[T]}X_a - \sum_{i\in[T]}X_{a_t}\Big]
+R = \max_{a\in [k]} \mathbb{E}\Big[\sum_{i\in[T]}X_{a,t} - \sum_{i\in[T]}X_{a_t,t} \Big]
 $$$
 
 For the purpose of this article, let's assume that all stochastic rewards are drawn from Normal Distribution with mean between 0 and 1.
@@ -26,13 +38,15 @@ Also, lets assume that the rewards are capped between -5 and 6.
 
 <!--<sub><sup>Note: the probabilty that $$N(0,1) \in [-5,5] is > 10^6$$, so we can assume properties for both bounded and normal distribution as when required.</sub></sup>-->
 
-###### Explore-then-commit:
+##### Explore-then-commit:
 
-Let's start with a simple algorithm: explore arms uniformly selecting each action $$N$$ times *(exploration phase)* the commiting to the best arm for the remaining $$T-N$$ rounds *(exploitation phase)*.
+Let's start with a simple algorithm: explore arms uniformly selecting each action $$N$$ times *(exploration phase)* the commiting to the best arm for the remaining $$T-NK$$ rounds *(exploitation phase)*.
 This simple looking algorithm suffers from sub-linear i.e. o(T) regret.
-From [Hoeffding's inequality](https://en.wikipedia.org/wiki/Hoeffding%27s_inequality), we can infer that if $$N$$ is chosen large enough, then the mean reward for each arm estimated by sampling in the exploration phase is almost equal to the true mean reward of the arm. 
+Proof sketch: 
+From [Hoeffding's inequality](https://en.wikipedia.org/wiki/Hoeffding%27s_inequality), we can infer that if $$N$$ is chosen large enough, then the mean reward for each arm estimated by sampling in the exploration phase is almost equal to the true mean reward of the arm. Then the total regret for exploration rounds is bounded by $$NK$$ times $$\max_{a\in[K]}\Delta_a$$ , and the total regret in exploration rounds should be close tob negligiable.
+
 Let $$\mu_a$$ be true mean of arm $$a$$ and $$\overline{\mu}_{a}$$ be the mean estimated by sampling. Then,
-$$\implies\mathbb{P}\big[ | \mu - \overline{\mu}_a | < \delta \big] \geq 1 - e^{\frac{-2\delta^2}{N\cdot(6 - (-5 )^2)}} = 1 - e^{\frac{-2\delta^2}{N\cdot121}}$$
+$$\implies\mathbb{P}\big[ | \mu_a - \overline{\mu}_a | < \delta \big] \geq 1 - e^{\frac{-2\delta^2}{N\cdot(6 - (-5 )^2)}} = 1 - e^{\frac{-2\delta^2}{N\cdot121}}$$
 <!--Let $$\delta = \sqrt{\frac{2\cdot log(T)}{N}}$$-->
 The the total regret suffered by the algorithm is the regret suffered in exploration phase + regret suffered in exploitation phase. The regret in any 1 round of exploration phase is bounded by the limits of rewards distribution *[6 - (-5)]* and with probability $$1 - e^{\frac{-2\delta^2}{N\cdot121}}$$ is no more than $$2\delta$$ and with probability $$e^{\frac{-2\delta^2}{N\cdot121}}$$ bounded by the limit of rewards distribution *[6 - (-5)]*
 $$\implies R \leq N\cdot K\cdot 11 + (1 - e^{\frac{-2\delta^2}{N\cdot121}})\cdot2\delta + e^{\frac{-2\delta^2}{N\cdot121}}\cdot 11$$
