@@ -5,7 +5,7 @@ layout: page
 mathjax: true
 ---
 
-The multi-armed bandit (MAB) is a classic problem in probability theory and statistics that models decision-making scenarios where you need to choose between different options with uncertain rewards. This article will discuss some known algorithms in MAB in stochastically chosen, adversarially chosen and stochastically chosen but strategically corrupted rewards scenarios and run simulation for the algorithms discussed.
+The multi-armed bandit (MAB) is a classic problem in probability theory and statistics that models exploitaion-exploration trade-off, leveraging choices that have proven effective in past versus choosing new options that might provide better unexplored tradeoffs. Imagine a row of slot machines, each with a different but unknown probability of paying out a reward. The goal is to maximize total reward over time by deciding which machines to play and how often. This article will discuss some known algorithms in MAB in stochastically chosen, adversarially chosen and stochastically chosen but strategically corrupted rewards scenarios and run simulation for the algorithms discussed.
 
 
 
