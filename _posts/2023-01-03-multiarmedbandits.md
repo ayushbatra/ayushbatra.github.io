@@ -8,51 +8,84 @@ mathjax: true
 The multi-armed bandit (MAB) is a classic problem in probability theory and statistics that models exploitation-exploration trade-off, leveraging choices that have proven effective in the past versus choosing new options that might provide better-unexplored trade-offs. Imagine a row of slot machines, each with a different and unknown distribution of paying out a reward. The goal is to select the arm of a machine at each time instance such that it maximizes the total reward over time. This article will discuss some known algorithms in MAB in stochastically chosen, adversarially chosen, and stochastically chosen but strategically corrupted reward scenarios and run simulations for the algorithms discussed.
 
 Notations used:
-+ $$k$$ : number of arms / actions
-+ $$[K]$$: the set all arms/actions
-+ $$a \in K$$: a unique arm/action
++ $$K$$: number of arms/actions
++ $$[K]$$: the set of all arms/actions
++ $$a \in [K]$$: a unique arm/action
 + $$T$$: total number of rounds
 + $$t \in [T]$$: a specific round
-+ $$a_t$$ : arm chosen in round $$t$$
++ $$a_t$$: arm chosen in round $$t$$
 + $$X_{a\in [K],t\in [T]}$$: reward for arm $$a$$ in round $$t$$ 
 + $$\Delta_{a,t}$$: is the difference between the reward of optimal arm and arm $$a$$ in round $$t$$.
-+ $$n_t(a)$$: is the number of pulls of arm $$a$$ upto round $$t$$.
++ $$n_t(a)$$: is the number of pulls of arm $$a$$ up to round $$t$$.
 
 &nbsp;
 #### Stochastic Bandits:
 
-Stochastic bandits are type of problem in which the reward of different actions are unrelated to each other, and the rewards of the same action at different time steps are an i.i.d distribution. 
+Stochastic bandits are a type of problem in which the reward of different actions are unrelated to each other, and the rewards of the same action at different time steps are an i.i.d distribution. 
 | **Protocol:** |
 |------------------|
-| ***Parameters***: $$K$$ arms, $$T$$ rounds, $$T > K$$ , for each arm $$a \in [K]$$, the reward for arm $$a$$ is drawn from distribution $$D_a$$. |
+| ***Parameters***: $$K$$ arms, $$T$$ rounds, $$T > K$$, for each arm $$a \in [K]$$, the reward for arm $$a$$ is drawn from distribution $$D_a$$. |
 |For each round $$n \in [T]$$ the algorithm chooses an $$a_t\in[K]$$ and observes a reward $$X_{a_t,t}$$ |
 
 The aim of the algorithm is to minimize the deficit suffered from not always choosing the arm, with the highest total expected reward.
-Lets define this deficit as Pseudo-Regret, as: 
+Let's define this deficit as Pseudo-Regret: 
 $$$
 R = \max_{a\in [k]} \mathbb{E}\Big[\sum_{i\in[T]}X_{a,t} - \sum_{i\in[T]}X_{a_t,t} \Big]
 $$$
 
-For the purpose of this article, let's assume that all stochastic rewards are drawn from Normal Distribution with mean between 0 and 1.
-Also, lets assume that the rewards are capped between -5 and 6.
+For the purpose of this article, let's assume that all stochastic rewards are drawn from Normal Distribution with mean between 0 and 1, and capped between -5 and 6.
 
-<!--<sub><sup>Note: the probabilty that $$N(0,1) \in [-5,5] is > 10^6$$, so we can assume properties for both bounded and normal distribution as when required.</sub></sup>-->
+<sub><sup>Note: the probabilty that $$N(0,1) \in [-5,5] is > 10^6$$, so we can assume properties for both bounded and normal distribution as when required.</sub></sup>
 
 ##### Explore-then-commit:
 
 Let's start with a simple algorithm: explore arms uniformly selecting each action $$N$$ times *(exploration phase)* the commiting to the best arm for the remaining $$T-NK$$ rounds *(exploitation phase)*.
 This simple looking algorithm suffers from sub-linear i.e. o(T) regret.
 Proof sketch: 
-From [Hoeffding's inequality](https://en.wikipedia.org/wiki/Hoeffding%27s_inequality), we can infer that if $$N$$ is chosen large enough, then the mean reward for each arm estimated by sampling in the exploration phase is almost equal to the true mean reward of the arm. Then the total regret for exploration rounds is bounded by $$NK$$ times $$\max_{a\in[K]}\Delta_a$$ , and the total regret in exploration rounds should be close tob negligiable.
+From [Hoeffding's inequality](https://en.wikipedia.org/wiki/Hoeffding%27s_inequality)[^1], we can infer that if $$N$$ is chosen large enough, then the mean reward for each arm estimated by sampling in the exploration phase is almost equal to the true mean reward of the arm. Then the total regret for exploration rounds is bounded by $$NK$$ times $$\max_{a\in[K]}\Delta_a$$ , and the total regret in exploration rounds should be close to negligiable.
+[^1]: *[Hoeffding's inequality](https://en.wikipedia.org/wiki/Hoeffding%27s_inequality) is a type of [Concentration inequality](https://en.wikipedia.org/wiki/Concentration_inequality), such inequalities come in useful for proving bounds on various bandits algorithms.*
 
-Let $$\mu_a$$ be true mean of arm $$a$$ and $$\overline{\mu}_{a}$$ be the mean estimated by sampling. Then,
-$$\implies\mathbb{P}\big[ | \mu_a - \overline{\mu}_a | < \delta \big] \geq 1 - e^{\frac{-2\delta^2}{N\cdot(6 - (-5 )^2)}} = 1 - e^{\frac{-2\delta^2}{N\cdot121}}$$
-<!--Let $$\delta = \sqrt{\frac{2\cdot log(T)}{N}}$$-->
-The the total regret suffered by the algorithm is the regret suffered in exploration phase + regret suffered in exploitation phase. The regret in any 1 round of exploration phase is bounded by the limits of rewards distribution *[6 - (-5)]* and with probability $$1 - e^{\frac{-2\delta^2}{N\cdot121}}$$ is no more than $$2\delta$$ and with probability $$e^{\frac{-2\delta^2}{N\cdot121}}$$ bounded by the limit of rewards distribution *[6 - (-5)]*
-$$\implies R \leq N\cdot K\cdot 11 + (1 - e^{\frac{-2\delta^2}{N\cdot121}})\cdot2\delta + e^{\frac{-2\delta^2}{N\cdot121}}\cdot 11$$
- to minimize the above equation we can assume $$N$$ to be $$O\big((\frac{T^2\log T}{K^2})^\frac{1}{3}\big)$$ and  $$\delta$$ to be $$O\big(\sqrt{ \frac{2\log(T)}{N} }\big)$$
+Let $$\mu_a$$ be true mean of arm $$a$$ and $$\overline{\mu}_{a,t}$$ be the mean estimated by sampling untill round $$t$$. 
+Then, by [Hoeffding's inequality](https://en.wikipedia.org/wiki/Hoeffding%27s_inequality)
+$$\implies\mathbb{P}\big[ | \mu_a - \overline{\mu}_{a,t} | > \delta_{a,t} \big] \leq  2e^{\frac{-2n_a(t)\cdot\delta_{a,t}^2}{(6 - (-5 ))^2}} = 2e^{\frac{-2n_a(t)\cdot\delta_{a,t}^2}{121}}$$
+Let $$\delta_{a,t} = \sqrt{\frac{2\cdot 121\cdot log(T)}{n_a(t)}} \implies \mathbb{P}\big[ | \mu_a - \overline{\mu}_{a,t} | > \delta_{a,t} \big] \leq\frac{2}{T^4}$$
+
+By Union Bound, $$\mathbb{P}\big[ \cup_{\forall a \in [K],t\in [T]} |\mu_a - \overline{\mu}_{a,t} | > \delta_{a,t}\big] \leq \sum_{t\in[T]}\sum_{a\in[K]} \frac{2}{T^4} \lt \frac{2}{T^4}$$
+
+Let the event that for all $$a\in[K]$$ and $$t\in[T]$$ , $$|\mu_a - \overline \mu_{a,t}| \leq \delta_{a,t}$$ be called clean event, and it occurs with probabilty $$\geq 1-O(\frac{1}{T^2})$$
+
+The the total regret suffered by the algorithm is the regret suffered in exploration phase + regret suffered in exploitation phase. The regret in any 1 round of exploration phase is bounded by the limits of rewards distribution *(6 - (-5))* and in exploitation phase, with high probability *(clean event occured)* is no more than $$\max_{a} 2\delta_{a,NK}$$ and with small probability *(clean even didn't happen)* is bounded by the limit of rewards distribution.
+$$\implies \mathbb{E}[R] \leq N\cdot K\cdot 11 + (1-O(\frac{1}{T^2}))\cdot\max_{a} 2\delta_{a,NK} + O(\frac{1}{T^2})\cdot 11$$
+ to minimize the above equation we can assume $$N$$ to be $$O\big((\frac{T^2\log T}{K^2})^\frac{1}{3}\big)$$ and  $$\delta_{a,NK}/$$ for any arm is $$O\big(\sqrt{ \frac{2\cdot121\cdot\log(T)}{N} }\big)$$
 $$\implies R = O\big( T^{\frac{2}{3}}K^\frac{1}{3}(\log T)^\frac{1}{3} \big)$$
+$$\square$$
 
+A python code implementation of the above algorithm looks like:
+```python
+class Explore_then_commit:
+	def __init__(self,actions, T):
+		self.k = len(actions)
+		self.N = (T**(2/3))*(np.log(T)**1/3)*self.k
+	def get_weights(self,actions, history, reward_dict, T):
+		t = len(history)
+		if len(history) < self.N:
+			return [1 if arm == actions[t%self.k] else 0 for arm in actions ]
+		best_arm = max( actions , key = lambda action : reward_dict[action]['sum_rewards']/reward_dict[action]['num_pulls'] )
+		weights = [1 if action == best_arm else 0 for action in actions]
+		return np.array(weights)
+	def next_action(self, actions , history , reward_dict , T):
+		return choose_action(self.get_weights(actions,history,reward_dict,T))	
+	def update(self, chosen_action, reward, history , reward_dict, T):
+		pass
+```
+Here, 
++ the variable actions is the set $$[K]$$,
++ history is a list of tuple of $$(a_t,X_{a_t,t})$$
++ reward_dict is a dictionary storing the number of pull and sum of rewards for each action.
++ The function get_weights at any point returns the probabilities with which the algorithm chooses to select any action at a time instance. 
+*Here the algorithm is deterministic so this function seems pointless but its utility will get clear in due time*
++ next_action returns the next action
++ update function is to update any internal state after observing the reward for the chosen action.
 
 
 
