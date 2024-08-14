@@ -17,7 +17,7 @@ Notations used:
 + $$X_{a\in [K],t\in [T]}$$: reward for arm $$a$$ in round $$t$$ 
 + $$\Delta_{a,t}$$: is the difference between the reward of optimal arm and arm $$a$$ in round $$t$$.
 + $$n_t(a)$$: is the number of pulls of arm $$a$$ up to round $$t$$.
-
++ a*: be the optimal arm.
 &nbsp;
 #### Stochastic Bandits:
 
@@ -50,14 +50,16 @@ Then, by [Hoeffding's inequality](https://en.wikipedia.org/wiki/Hoeffding%27s_in
 $$\implies\mathbb{P}\big[ | \mu_a - \overline{\mu}_{a,t} | > \delta_{a,t} \big] \leq  2e^{\frac{-2n_a(t)\cdot\delta_{a,t}^2}{(6 - (-5 ))^2}} = 2e^{\frac{-2n_a(t)\cdot\delta_{a,t}^2}{121}}$$
 Let $$\delta_{a,t} = \sqrt{\frac{2\cdot 121\cdot log(T)}{n_a(t)}} \implies \mathbb{P}\big[ | \mu_a - \overline{\mu}_{a,t} | > \delta_{a,t} \big] \leq\frac{2}{T^4}$$
 
-By Union Bound, $$\mathbb{P}\big[ \cup_{\forall a \in [K],t\in [T]} |\mu_a - \overline{\mu}_{a,t} | > \delta_{a,t}\big] \leq \sum_{t\in[T]}\sum_{a\in[K]} \frac{2}{T^4} \lt \frac{2}{T^4}$$
+By Union Bound, $$\mathbb{P}\big[ \cup_{\forall a \in [K],t\in [T]} |\mu_a - \overline{\mu}_{a,t} | > \delta_{a,t}\big] \leq \sum_{t\in[T]}\sum_{a\in[K]} \frac{2}{T^4} \lt \frac{2}{T^4}$$[^2]
+[^2]: For this particular proof we dont't need such a strict condition on difference between empirical and true mean, this proof only requires that the emipirical mean is close to true mean for $$t = NK$$ and not all $$t\in[T]$$. But this extra condition will be helpful for further proofs.
+
 
 Let the event that for all $$a\in[K]$$ and $$t\in[T]$$ , $$|\mu_a - \overline \mu_{a,t}| \leq \delta_{a,t}$$ be called clean event, and it occurs with probabilty $$\geq 1-O(\frac{1}{T^2})$$
 
 The the total regret suffered by the algorithm is the regret suffered in exploration phase + regret suffered in exploitation phase. The regret in any 1 round of exploration phase is bounded by the limits of rewards distribution *(6 - (-5))* and in exploitation phase, with high probability *(clean event occured)* is no more than $$\max_{a} 2\delta_{a,NK}$$ and with small probability *(clean even didn't happen)* is bounded by the limit of rewards distribution.
 $$\implies \mathbb{E}[R] \leq N\cdot K\cdot 11 + (1-O(\frac{1}{T^2}))\cdot\max_{a} 2\delta_{a,NK} + O(\frac{1}{T^2})\cdot 11$$
  to minimize the above equation we can assume $$N$$ to be $$O\big((\frac{T^2\log T}{K^2})^\frac{1}{3}\big)$$ and  $$\delta_{a,NK}/$$ for any arm is $$O\big(\sqrt{ \frac{2\cdot121\cdot\log(T)}{N} }\big)$$
-$$\implies R = O\big( T^{\frac{2}{3}}K^\frac{1}{3}(\log T)^\frac{1}{3} \big)$$
+$$\implies \mathbb{E}[R] = O\big( T^{\frac{2}{3}}K^\frac{1}{3}(\log T)^\frac{1}{3} \big)$$
 $$\square$$
 
 A python code implementation of the above algorithm looks like:
@@ -78,15 +80,31 @@ class Explore_then_commit:
 	def update(self, chosen_action, reward, history , reward_dict, T):
 		pass
 ```
+The implementation of the function choose action is as follows:
+```python
+def choose_action( weights ):
+	weights = np.array(weights)/sum(weights)
+	k = len(weights)
+	choice = np.random.choice( list(range(k)) , p=weights)
+	return choice
+```
 Here, 
++ np is the library numpy
 + the variable actions is the set $$[K]$$,
 + history is a list of tuple of $$(a_t,X_{a_t,t})$$
 + reward_dict is a dictionary storing the number of pull and sum of rewards for each action.
 + The function get_weights at any point returns the probabilities with which the algorithm chooses to select any action at a time instance. 
-*Here the algorithm is deterministic so this function seems pointless but its utility will get clear in due time*
+*Here the algorithm is deterministic so this function seems pointless but its utility will get clear in some time*
 + next_action returns the next action
 + update function is to update any internal state after observing the reward for the chosen action.
 
+##### $$\epsilon$$-Greedy:
+Another algorithm that achieves same expected regret is the $$\epsilon$$-Greedy algorithm.
+In each round, the algorithm chooses the arm with highest empirical award with probability $$1-\epsilon_t$$ and with probabilty $$\epsilon_t$$ it chooses a random arm.
+with $$\epsilon_t = O((\frac{K\log(t)}{t})^\frac{1}{3})$$ it achieves similar as explore_then _commit regret bound, $$\mathbb{E}[R] = O\big( T^{\frac{2}{3}}K^\frac{1}{3}(\log T)^\frac{1}{3} \big)$$
+Proof Sketch: For any round $$t$$, we can expect that with a high probability that clean event occurs and that all arms would be pulled more than $$\frac{\epsilon_t t}{2k}$$.
+Hence regret in round $$t$$ in expectation would be bounded by 
+$$R_t \leq \epsilon_t \max \Delta_a +$$ $$\Delta_{a_t}$$
 
 
 
