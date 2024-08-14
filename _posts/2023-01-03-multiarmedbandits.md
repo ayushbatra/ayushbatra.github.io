@@ -18,6 +18,7 @@ Notations used:
 + $$\Delta_{a,t}$$: is the difference between the reward of optimal arm and arm $$a$$ in round $$t$$.
 + $$n_t(a)$$: is the number of pulls of arm $$a$$ up to round $$t$$.
 + a*: be the optimal arm.
++ $$\mathbb{I}\{predicate\}$$: indicator function on predicate, it is $$1$$ if predicate is true 0 otherwise. 
 &nbsp;
 #### Stochastic Bandits:
 
@@ -172,9 +173,12 @@ class Successive_elimination:
 ```
 
 ##### UCB1:
-Let us consider another approach for adaptive exploration. Assume that every arm is as good as it can possibly be
-
-
+Let us consider another approach for adaptive exploration. 
+Assume that every arm is as good as it can possibly be and choose the arm with the highest upper limit on mean reward in each round.
+The two summands in the estimation of choice arm, $$\overline\mu+ \delta$$ strikes balance between exploration and exploitation, the former increases for good arms and the latter for less explored arms.
+This algorithm achieves an expected regret of $$O(\sqrt{KT\log T})$$
+Proof Sketch:
+The proof idea is same as Successive elimination in a round $$t_0$$ if an arm $$a_0$$, then the regret with this round can be bounded with $$O(\sqrt{\frac{\log T}{n_{t_0}(a_0)} })$$ with high probability and then the by summing this bound over all rounds, the total regret can be bounded with $$O(\sqrt{KT\log T})$$.
 
 A python code implementation of the above algorithm looks like:
 ```python
@@ -193,8 +197,51 @@ class UCB1:
 	def update(self, chosen_action, reward, history , reward_dict, T):
 		return
 ```
+#### Adversarial Bandits:
+
+Stochastic Bandits take a very strong assumption on the rewards of the actions. This strong assumption might limit the application and guarantees of the above algorithms where the i.i.d. assumption is violated. Adversarial bandits swing on the other side and takes no assumption on the reward of each arms. The rewards could be chosen in advance for all rounds and all actions by an adversary, or an adversary could choose future rewards based on action selection and rewars in the past. Even in this pessimistic scenario we can guarantee some upper bounds on the regret suffered.
+In adversarial bandits, pseudo-regret is defined as the deficit suffered from the best arm policy. $$E[R] = \max_{a\in[K]}\mathbb{E}\big[ \sum_{t\in[T]}X_{a,t} - \sum_{t\in[T]}X_{a_t,t} \big]$$ 
+##### EXP3:
+Let's define the loss of any reward as the difference between maximum possible reward and the observed reward, scaled between 0 to 1, for our scenario, our rewards are bounded between -5 and 6, so our $$loss = \frac{-1}{11}\cdot(reward-6)$$ 
+The key idea in exp3 algorithm is it tries to keep a record of cumulative loss for each arm. Since in any round reward/loss of only one action is observed keeping the exact record is not possible. The idea is to scale the loss with inverse of the probability of observing it. 
+The loss of action $$a$$ at round $$t$$ is 
+$$$
+\tilde l_{a_0,t} = \begin{cases}
+    l_{a_t,t}/\mathbb{P}[a_t = a_0] & \text{if } a_t = a_0 \\ % & is your "\tab"-like command (it's a tab alignment character)
+    0 & \text{otherwise.}
+\end{cases}
+$$$
+Here, $$\tilde l_{a_0,t}$$ can be calculated for all arms $$a\in[K]$$ irrespective if it were pulled or not. The cummulative loss is $$\tilde L_{a,t} = \sum_{i\leq t}\tilde l_{a,i}$$.
+The expected value of $$\tilde l_{a,t}$$ in round $$t$$ is equal to the actual loss of the arm $$l_{i,t}$$.
+(*Using $$P_{a,t}$$ for $$\mathbb{P}[a_t = a]$$.*)
+$$\implies \mathbb{E}[ \tilde l_{a_0,t}] = \sum_{a\in[K]} P_{a,t} \times \frac{l_{a,t}\cdot \mathbb{I}\{a=a_0\}}{P_{a,t}} = l_{a_0,t}$$
+After the cummulative loss of each arm is known, the probability distribution for selecting an arm $$a_0$$ of 
 
 
+
+
+
+A python code implementation of the above algorithm looks like:
+```python
+class EXP3:
+	def __init__(self,actions,T):
+		self.k = len(actions)
+		self.L = np.zeros(self.k)
+		self.p = None
+	def get_weights(self, actions, history, reward_dict, T):
+		t = len(history)+1
+		eta = np.sqrt( np.log(self.k) / (t*self.k)  )
+		return [ np.exp(-1 * self.L[i]*eta) for i in range(self.k)  ]
+	def next_action(self, actions , history , reward_dict , T):
+		self.p = np.array(self.get_weights(actions, history, reward_dict, T))
+		self.p /= np.sum(self.p)
+		return choose_action(self.p)
+	def update(self, chosen_action, reward, history , reward_dict, T):
+		loss = (-1/11)*(reward-6)
+		self.L[chosen_action] += loss / self.p[chosen_action]
+		self.p = None
+		return
+```
 
 
 
