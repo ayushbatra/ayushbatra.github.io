@@ -100,25 +100,99 @@ Here,
 
 ##### $$\epsilon$$-Greedy:
 Another algorithm that achieves same expected regret is the $$\epsilon$$-Greedy algorithm.
-In each round, the algorithm chooses the arm with highest empirical award with probability $$1-\epsilon_t$$ and with probabilty $$\epsilon_t$$ it chooses a random arm.
-with $$\epsilon_t = O((\frac{K\log(t)}{t})^\frac{1}{3})$$ it achieves similar as explore_then _commit regret bound, $$\mathbb{E}[R] = O\big( T^{\frac{2}{3}}K^\frac{1}{3}(\log T)^\frac{1}{3} \big)$$
-Proof Sketch: For any round $$t$$, we can expect that with a high probability that clean event occurs and that all arms would be pulled more than $$\frac{\epsilon_t t}{2k}$$.
+In each round, the algorithm chooses the arm with highest empirical award with probability $$1-\epsilon_t$$ and with probabilty $$\epsilon_t$$ it chooses a random arm. With  $$\epsilon_t = O((\frac{K\log(t)}{t})^\frac{1}{3})$$ 
+it achieves similar as explore_then _commit regret bound, 
+$$\mathbb{E}[R] = O\big( T^{\frac{2}{3}}K^\frac{1}{3}(\log T)^\frac{1}{3} \big)$$
+
+Proof Sketch: For any round $$t$$, we can expect that with a high probability that clean event occurs and that all arms would be pulled more than $$\frac{1}{2}\times\frac{\epsilon_t t}{k}$$.
 Hence regret in round $$t$$ in expectation would be bounded by 
-$$R_t \leq \epsilon_t \max \Delta_a +$$ $$\Delta_{a_t}$$
+$$R_t \leq \epsilon_t \max \Delta_a + \Delta_{a_t}$$
+Since, $$a_t$$ has highest empirical reward, we can use the clean event condition and argue that $$|\mu_{a*} - \mu_{a_t}| \le \delta_{a_t} + \delta_{a*} \leq \sqrt{\frac{2\cdot121\log t}{n_t(a*)}}+\sqrt{\frac{2\cdot121\log t}{n_t(a_t)}}$$
+$$\implies \mathbb{E}[R_t] \leq \epsilon_t\max_a \Delta_a + 2\sqrt{\frac{2\cdot2\cdot121\cdot k\log t}{\epsilon_t k}}$$
+Substituting the value of $$\epsilon_t$$ that minimizes the expression on RHS and then summing this value for all $$t\in [T]$$ gives the expected regret bound.
+$$\square$$
+A python code implementation of the above algorithm looks like: 
+``` python
+class EGreedy:
+	def __init__(self, actions, T):
+		self.k = len(actions)
+		self.epsilon = lambda t: (self.k * np.log(t) / t)**(1/3)
+	def get_weights(self, actions, history, reward_dict, T):
+		if len(history) < self.k:
+			unchosen_actions = [el for el in actions if el not in [h[0] for h in history ] ]
+			return [1 if i in unchosen_actions else 0 for i in range(self.k)] 		
+		t = len(history)+1
+		best_arm = max( actions , key = lambda action : reward_dict[action]['sum_rewards']/reward_dict[action]['num_pulls'] )
+		weights = (1-self.epsilon(t))*np.array([1 if action == best_arm else 0 for action in actions])
+		weights += self.epsilon(t)*np.ones(self.k)
+		return weights
+	def next_action(self, actions , history , reward_dict , T):
+		return choose_action(self.get_weights(actions,history,reward_dict,T))	
+	def update(self, chosen_action, reward, history , reward_dict, T):
+		pass
+```
+
+##### Successive_Elimination:
+One draw-back with the previous two algorithms is that the exploration phase is completely oblivious to the rewards observed. If certain arms have already shown that they have very bad rewards compared to others, there is no need to keep trying them out.
+Based on this idea here is an algorithm that achieves better regret guarantees.
+
+We have earlier shown that with a very high probability, the empirical mean and the true mean are within $$\delta_{a,t} = \sqrt{\frac{2\cdot121\cdot\log T}{n_t(a)}}$$ difference. Based on this, for any arm at any time instance, we assume a window where its true mean lies.  $$\mu_a \in [\overline\mu_{a,t} - \delta_{a,t} , \overline\mu_{a,t} + \delta_{a,t}]$$
+If at any time, we observe that the upper limit of the true mean for an arm is less than the lower limit of true mean of another arm, we can safely assume that, this arm is not the optimal arm.
+The algorithm protocol is as follows: initially all arms are active. If the upper limit of mean reward of an arm becomes less than the lower limit of mean reward of any other arm, mark this arm as inactive. Select any active arm at random.
+This algorithm achives $$O(\sqrt{KT\log T})$$ regret bound.
+Proof Sketch: For any arm $$a_0$$, that was last pulled at time $$t_0$$, then 
+$$|\mu_{a*} - \mu_{a_0} | \leq \delta_{a_0,t}+\delta{a* ,t} \leq \sqrt{\frac{2\cdot121\cdot\log T}{n_{t_0}(a_0)}}+\sqrt{\frac{2\cdot121\cdot\log T}{n_{t_0}(a*)}}$$
+Now, $$n_{t_0}(a*) \approx n_{t_0}(a_0) = n_{T}(a_0)$$.
+Hence, $$|\mu_{a*} - \mu_{a_0} | \leq O(\sqrt{\frac{\log T}{n_{T}(a_0)}})$$.
+The total regret suffered from by pulling this arm multiple times is $$\leq O(\sqrt{\frac{\log T}{n_{T}(a_0)}})\times n_{T}(a_0)$$. On summing this quantity for all arms, the total regret for this algorithm can be bounded.
+$$\square$$
+A python code implementation of the above algorithm looks like:
+```python
+class Successive_elimination:
+	def __init__(self,actions,T):
+		self.k = len(actions)
+		self.active_actions = actions.copy()
+		self.radius = lambda n : np.sqrt(2*np.log(T)/n)
+	def get_weights(self, actions, history, reward_dict, T):
+		if len(history) < self.k:
+			unchosen_actions = [el for el in actions if el not in [h[0] for h in history ] ]
+			return [1 if i in unchosen_actions else 0 for i in range(self.k)]
+		return [1 if i in self.active_actions else 0 for i in range(self.k)]
+	def next_action(self, actions, history, reward_dict, T):
+		return choose_action(self.get_weights(actions, history, reward_dict, T))
+	def update(self, chosen_action, reward, history , reward_dict, T):
+		if len(history) < self.k:
+			return
+		if len(self.active_actions) <= 1:
+			return
+		highest_lower_bound = max( [ reward_dict[action]['sum_rewards']/reward_dict[action]['num_pulls'] - self.radius(reward_dict[action]['num_pulls']) for action in self.active_actions ] )
+		remaining_actions = [ action for action in self.active_actions if reward_dict[action]['sum_rewards']/reward_dict[action]['num_pulls'] + self.radius(reward_dict[action]['num_pulls']) > highest_lower_bound ]
+		self.active_actions = remaining_actions
+		return
+```
+
+##### UCB1:
+Let us consider another approach for adaptive exploration. Assume that every arm is as good as it can possibly be
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+A python code implementation of the above algorithm looks like:
+```python
+class UCB1:
+	def __init__(self, actions, T):
+		self.k = len(actions)
+		self.radius = lambda n : np.sqrt(2*np.log(T)/n)
+	def get_weights(self, actions, history, reward_dict, T):
+		if len(history) < self.k:
+			unchosen_actions = [el for el in actions if el not in [h[0] for h in history ] ]
+			return [1 if i in unchosen_actions else 0 for i in range(self.k)]
+		chosen_action = max(reward_dict , key = lambda action: reward_dict[action]['sum_rewards']/reward_dict[action]['num_pulls']+self.radius(reward_dict[action]['num_pulls']))
+		return [1 if i == chosen_action else 0 for i in actions]
+	def next_action(self, actions, history, reward_dict, T):
+		return choose_action(self.get_weights(actions,history,reward_dict,T))
+	def update(self, chosen_action, reward, history , reward_dict, T):
+		return
+```
 
 
 
