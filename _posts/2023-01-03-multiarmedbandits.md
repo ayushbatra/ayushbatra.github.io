@@ -215,7 +215,12 @@ Here, $$\tilde l_{a_0,t}$$ can be calculated for all arms $$a\in[K]$$ irrespecti
 The expected value of $$\tilde l_{a,t}$$ in round $$t$$ is equal to the actual loss of the arm $$l_{i,t}$$.
 (*Using $$P_{a,t}$$ for $$\mathbb{P}[a_t = a]$$.*)
 $$\implies \mathbb{E}[ \tilde l_{a_0,t}] = \sum_{a\in[K]} P_{a,t} \times \frac{l_{a,t}\cdot \mathbb{I}\{a=a_0\}}{P_{a,t}} = l_{a_0,t}$$
-After the cummulative loss of each arm is known, the probability distribution for selecting an arm $$a_0$$ of 
+After the cummulative loss of each arm is known, the probability distribution for selecting an arm $$a_0$$ is an exponential weight of the loss of that arm.
+$$P_{a_0,t} = \frac{\exp(-\eta_t \tilde L_{a_0,t}) }{\sum_a \exp(-\eta \tilde L_{a,t})}$$ for $$\eta \geq 0$$.
+For large $$\eta$$ the algorithm tends to exploit the result and aggressively choose arms with less cummulative loss, on the other hand with smaller $$\eta$$ it tends to explore more, and when $$\eta = 0$$ it chooses all arms with equal liklihood.
+If exp-3 is run with $$\eta = \sqrt{\frac{2\log K}{TK} }$$ the pseudo-regret is $$\mathbb E[R] = O(\sqrt{TK\log K})$$.
+Proof Sketch:
+
 
 
 
