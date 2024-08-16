@@ -26,7 +26,7 @@ Stochastic bandits are a type of problem in which the reward of different action
 | **Protocol:** |
 |------------------|
 | ***Parameters***: $$K$$ arms, $$T$$ rounds, $$T > K$$, for each arm $$a \in [K]$$, the reward for arm $$a$$ is drawn from distribution $$D_a$$. |
-|For each round $$n \in [T]$$ the algorithm chooses an $$a_t\in[K]$$ and observes a reward $$X_{a_t,t}$$ |
+|For each round $$t \in [T]$$ the algorithm chooses an $$a_t\in[K]$$ and observes a reward $$X_{a_t,t}$$ |
 
 The aim of the algorithm is to minimize the deficit suffered from not always choosing the arm, with the highest total expected reward.
 Let's define this deficit as Pseudo-Regret: 
@@ -199,8 +199,15 @@ class UCB1:
 ```
 #### Adversarial Bandits:
 
-Stochastic Bandits take a very strong assumption on the rewards of the actions. This strong assumption might limit the application and guarantees of the above algorithms where the i.i.d. assumption is violated. Adversarial bandits swing on the other side and takes no assumption on the reward of each arms. The rewards could be chosen in advance for all rounds and all actions by an adversary, or an adversary could choose future rewards based on action selection and rewars in the past. Even in this pessimistic scenario we can guarantee some upper bounds on the regret suffered.
+Stochastic Bandits take a very strong assumption on the rewards of the actions. This strong assumption might limit the application and guarantees of the above algorithms where the i.i.d. assumption is violated. Adversarial bandits swing on the other side and takes no assumption on the reward of each arms. 
+| **Protocol:** |
+|------------------|
+| ***Parameters***: $$K$$ arms, $$T$$ rounds, $$T > K$$, for any time $$t\in[T]$$ the environment chooses reward $$X_{a,t}$$ for each arm $$a \in [K]$$, The environment can adapt the reward based on the algorithm protocol and the history of all chosen actions and rewards |
+|For each round $$t \in [T]$$ the algorithm chooses an $$a_t\in[K]$$ and observes a reward $$X_{a_t,t}$$ |
+No deterministic algorithm can hope to do well in this scenario, since the environment knows exactly which action the algorithm is going to choose apriori setting the rewards for the next round and set the rewards accordingly.
+Even in this pessimistic scenario we can guarantee some upper bounds on the regret suffered.
 In adversarial bandits, pseudo-regret is defined as the deficit suffered from the best arm policy. $$E[R] = \max_{a\in[K]}\mathbb{E}\big[ \sum_{t\in[T]}X_{a,t} - \sum_{t\in[T]}X_{a_t,t} \big]$$ 
+
 ##### EXP3:
 Let's define the loss of any reward as the difference between maximum possible reward and the observed reward, scaled between 0 to 1, for our scenario, our rewards are bounded between -5 and 6, so our $$loss = \frac{-1}{11}\cdot(reward-6)$$ 
 The key idea in exp3 algorithm is it tries to keep a record of cumulative loss for each arm. Since in any round reward/loss of only one action is observed keeping the exact record is not possible. The idea is to scale the loss with inverse of the probability of observing it. 
@@ -263,10 +270,90 @@ class EXP3:
 		return
 ```
 #### Stochastic Bandits with Adversarial Corruption:
-Both Stochastic and adversarial bandits swing too far with their assumptions on the reward scenraios. We can confirm a middle ground
+Both Stochastic and adversarial bandits swing too far with their assumptions on the reward scenarios. Here we want to discuss the work of Lykouris, Mirrokni, and Paes Leme (2018)[^3]
+[^3]: {Lykouris, Thodoris, Mirrokni, Vahab, & Paes Leme, Renato. (2018). *Stochastic bandits robust to adversarial corruptions*. In *Proceedings of the 50th Annual ACM SIGACT Symposium on Theory of Computing* (pp. 114–122).}
+
+Another approach on the reward assumption can be in a middle ground, in this model we assume that rewards are initially drawn from a fixed distribtion, but are adultereated with a finite amount of corruption by an adaptive adversary. 
+| **Protocol:** |
+|------------------|
+| ***Parameters***: $$K$$ arms, $$T$$ rounds, $$T > K$$, for any time $$t\in[T]$$ the environment chooses reward $$X_{a,t}$$ for each arm $$a \in [K]$$ from distribution $$D_a$$. The adversary chooses a corruption $$c_{a,t}$$ based on the algorithm protocol and the history of all chosen actions and rewards. The total corruption is bounded: $$\sum_t max_a \lvert c_{a,t}\rvert \text{  }\leq C$$.
+|For each round $$t \in [T]$$ the algorithm chooses an $$a_t\in[K]$$ and observes the corrupted reward $$X_{a_t,t}+c_{a,t}$$ |
+
+By varying the total corruption this model generalizes both stochastic and adversarial bandits.
+
+##### Multi-layer Active Arm Elimination Race:
+
+Proof Sketch:
 
 
 
+A python code implementation of the above algorithm looks like:
+```python
+class MultiLayer_active_arm_elimination:
+	def __init__(self,actions,T):
+		self.k = len(actions)
+		self.num_layers = int(np.ceil(np.log(T)))
+		self.sum_rewards = np.zeros( (self.num_layers,self.k) )
+		self.num_pulls = np.zeros((self.num_layers,self.k))
+		self.active_arms = [ actions.copy() for i in range(self.num_layers)  ]
+		self.chosen_layer = None
+		alpha = lambda n : np.log(4* self.k * T * np.log(T) / 0.01 ) / n
+		self.radius = lambda n : alpha(n)+ np.sqrt(alpha(n))
+	def get_weight_nthlayer(self, n, actions, history, reward_dict, T):
+		if len(self.active_arms[n]) == 0:
+			return self.get_weight_nthlayer(n+1, actions, history, reward_dict, T)
+		return np.array([1 if i in self.active_arms[n] else 0 for i in actions])	
+	def get_weights(self, actions, history, reward_dict, T):
+		weights = np.zeros(self.k)
+		for i in range(self.num_layers):
+			weights += 2**( -(i+1) ) * self.get_weight_nthlayer(i,actions,history,reward_dict,T)
+		weights += 	2**( -(self.num_layers+1) )*self.get_weight_nthlayer(0,actions,history,reward_dict,T)
+		return weights
+	def next_action(self,actions,history,reward_dict,T):
+		if len(history) < self.k:
+			unchosen_actions = [el for el in actions if el not in [h[0] for h in history ] ]
+			return choose_action([1 if i in unchosen_actions else 0 for i in range(self.k)])
+		p = [ 2**(-1* (i+1) ) for i in range(self.num_layers) ]
+		p[0] += 2**( -1*(self.num_layers) )
+		self.chosen_layer = np.random.choice( range(self.num_layers)  , p = p )
+		return choose_action( self.get_weight_nthlayer(self.chosen_layer, actions, history, reward_dict, T) )
+	def update(self, chosen_action, reward, history , reward_dict, T):
+		if len(history) < self.k:
+			for layer in range(self.num_layers):
+				self.num_pulls[layer][chosen_action]+=1
+				self.sum_rewards[layer][chosen_action]+=reward
+			self.chosen_layer = None
+			return
+
+		self.num_pulls[self.chosen_layer][chosen_action]+=1
+		self.sum_rewards[self.chosen_layer][chosen_action]+=reward
+
+		if len(self.active_arms[self.chosen_layer]) <= 1:
+			self.chosen_layer = None
+			return
+
+		lower_bounds = [ (			
+			self.sum_rewards[self.chosen_layer][arm]/self.num_pulls[self.chosen_layer][arm] 
+			- self.radius(self.num_pulls[self.chosen_layer][arm])			
+			)
+			 for arm in self.active_arms[self.chosen_layer] ]
+		
+		highest_lower_bound = max(lower_bounds)
+
+		self.active_arms[self.chosen_layer] = [arm for arm in self.active_arms[self.chosen_layer]
+				if (
+				self.sum_rewards[self.chosen_layer][arm]/self.num_pulls[self.chosen_layer][arm]
+				 + self.radius(self.num_pulls[self.chosen_layer][arm] ) 
+				 ) 
+					> highest_lower_bound 
+				]
+
+		for i in range(self.chosen_layer):
+			self.active_arms[i] = list(set(self.active_arms[i]) & set(self.active_arms[self.chosen_layer]))
+
+		self.chosen_layer = None
+		return
+```
 
 
 
