@@ -7,6 +7,7 @@ mathjax: true
 
 The multi-armed bandit (MAB) is a classic problem in probability theory and statistics that models exploitation-exploration trade-off, leveraging choices that have proven effective in the past versus choosing new options that might provide better-unexplored trade-offs. Imagine a row of slot machines, each with a different and unknown distribution of paying out a reward. The goal is to select the arm of a machine at each time instance such that it maximizes the total reward over time. This article will discuss some known algorithms in MAB in stochastically chosen, adversarially chosen, and stochastically chosen but strategically corrupted reward scenarios and run simulations for the algorithms discussed.
 
+### Overview of the Algorithms:
 Notations used:
 + $$K$$: number of arms/actions
 + $$[K]$$: the set of all arms/actions
@@ -282,10 +283,7 @@ Another approach on the reward assumption can be in a middle ground, in this mod
 By varying the total corruption this model generalizes both stochastic and adversarial bandits.
 
 ##### Multi-layer Active Arm Elimination Race:
-
-Proof Sketch:
-
-
+This algorithm extends successive elimination. In successive elimination, we kept a record of all active arms, and eliminated arms, under assumption of clean event, if they could not be the best arms. The idea is similar, but instead of keeping a single such list, the algorithm maintains multiple such lists, let's call them layers(assume $$n$$ layers). In each round, it selects a layer with probability $$\propto_{\approx} 2^{-n}$$. The layer n, updates its dictionaries of number of arm pulls and empirical means, only when the layer is selected. The result of each subsequent layer is more robust to the corruption, since they are only likely to admit $$2^{-n}$$ times the corruption, in their dictionaries. Whenever a layer $$n$$ concludes that an arm $$a$$ needs to be eliminated all its previous layer, also remove that arm. In case a layer is selected but has no active arms, it selects the arm based on next smallest layer that is not empty.
 
 A python code implementation of the above algorithm looks like:
 ```python
@@ -354,6 +352,225 @@ class MultiLayer_active_arm_elimination:
 		self.chosen_layer = None
 		return
 ```
+### Simulations:
+
+Now that we have introduced all the algorithms, let's see how they practically fair, but running some simulations.
+##### Stochastic Bandits:
+Consider the case of when the rewards follow i.i.d. assumption at each time step.
+The simulation code is as follows:
+```python
+def simulate_stochastic_bandits(k, T, mean_rewards , solver):
+	assert k == len(mean_rewards)
+	actions = list(range(k))
+
+	reward_dict = {action: { 'num_pulls': 0, 'sum_rewards':0} for action in actions}
+
+	# a list of tuple of action chosen and reward observed
+	history = [  ]
+
+	mab = solver(actions, T)
+	for iteration in range(T):
+		chosen_action = mab.next_action(actions,history,reward_dict,T)
+	# sampling reward for the chosen action
+		reward = np.random.normal(loc = mean_rewards[chosen_action] , scale = 1)
+		reward = max(-5, reward)
+		reward = min(6,reward)
+		mab.update(chosen_action,reward,history,reward_dict,T)
+	#updating the history of actions and rewards and dict of number of pulls and sum of rewards
+		history.append( (chosen_action , reward) )
+		reward_dict[chosen_action]['num_pulls']+=1
+		reward_dict[chosen_action]['sum_rewards']+=reward
+	regret = max(mean_rewards) - sum([el[1] for el in history])/T
+	return( max(mean_rewards) , sum([el[1] for el in history])/T  , regret )
+```
+Here, history is a list of tuple of action chosen and reward observed, reward dictionary maintains number of pulls and sum of rewards for each action. The simulation returns maximum of expected reward for an arm, the average reward observed the algorithm, and the regret divided by T suffered by the algorithm.
+
+Let's observe the regret for $$k = 3$$, with mean rewards be $$[0,0.3,1]$$ and $$T = 50000$$.
+The results are:
+|algorithm | Expected reward of optimal arm | Average reward in each round | average Regret in each round|
+|---|---|---|---|
+|Explore_then_commit|1|0.82844|0.17156|
+|EGreedy|1|0.83584|0.16416|
+|Successive_elimination|1|0.99825|0.00175|
+|UCB1|1|0.99574|0.00426|
+|EXP3|1|0.88704|0.11296|
+|MultiLayer_active_arm_elimination|1|0.94698|0.05302|
+
+
+##### Stochastic Bandits with switched mean:
+Let's simulate in another scenario in which the mean rewards are switched after T/2 rounds.
+
+The simulation code is as follows:
+```python
+def simulate_switchmean_stochastic_bandits(k,T,mean_rewards,switched_rewards,solver):
+	assert k == len(mean_rewards) == len(switched_rewards)
+	actions = list(range(k))
+	reward_dict = {action: { 'num_pulls': 0, 'sum_rewards':0} for action in actions}
+	history = []
+	mab = solver(actions, T)
+	for iteration in range(T):
+		chosen_action = mab.next_action(actions,history,reward_dict,T)
+		reward = np.random.normal(loc = mean_rewards[chosen_action] , scale = 1)
+		if iteration > T//2:
+			reward = np.random.normal(loc = switched_rewards[chosen_action] , scale = 1)
+		reward = max(-5, reward)
+		reward = min(6,reward)
+		mab.update(chosen_action,reward,history,reward_dict,T)
+		history.append( (chosen_action , reward) )
+		reward_dict[chosen_action]['num_pulls']+=1
+		reward_dict[chosen_action]['sum_rewards']+=reward
+	regret =  max(mean_rewards) * (1/2) + max(switched_rewards)*(1/2) - sum([el[1] for el in history])/T
+
+	return((max(mean_rewards) * (1/2) + max(switched_rewards)*(1/2) ),(sum([el[1] for el in history])/T),regret)
+```
+Let's observe the regret for $$k = 3$$, with mean rewards be $$[0,0.3,1]$$ and switched rewards be $$[1,0.3,0]$$ and $$T = 50000$$.
+The results are:
+|algorithm | Expected reward of optimal arm | Average reward in each round | average Regret in each round|
+|---|---|---|---|
+|Explore_then_commit|1.0|0.3263|0.6737|
+|EGreedy|1.0|0.45929|0.54071|
+|Successive_elimination|1.0|0.49763|0.50237|
+|UCB1|1.0|0.99367|0.00633|
+|EXP3|1.0|0.50991|0.49009|
+|MultiLayer_active_arm_elimination|1.0|0.45982|0.54018|
+
+##### Adaptive Adversarial bandits:
+Let's simulate the case where the adverary for the first T/10 rounds, simulates a stochastic bandits, and then sets reward for each arm either 0 or 1, depending if the probabilty of it getting pulled is greater or less than $$1/K$$.
+The simulation code is as follows:
+```python
+def simluate_adaptive_adversarial_bandits(k,T,mean_rewards,solver):
+	assert k == len(mean_rewards)
+	actions = list(range(k))
+	reward_dict = {action: { 'num_pulls': 0, 'sum_rewards':0} for action in actions}
+	history = []
+	rewards = []
+	mab = solver(actions, T)
+	for iteration in range(T):
+		weights = np.array(mab.get_weights(actions,history,reward_dict,T), dtype=np.float64)
+		weights /= sum(weights)
+		if iteration < T/10:
+			current_rewards = [ np.random.normal(loc = mean_rewards[i] , scale = 1) for i in range(k) ]
+		else:
+			current_rewards = [ 0 if i > 1/k else 1 for i in weights ]
+		chosen_action = mab.next_action(actions,history,reward_dict,T)
+		reward = current_rewards[chosen_action]
+		reward = max(-5, reward)
+		reward = min(6,reward)
+		mab.update(chosen_action,reward,history,reward_dict,T)
+		rewards.append(current_rewards)
+		history.append( (chosen_action , reward) )
+		reward_dict[chosen_action]['num_pulls']+=1
+		reward_dict[chosen_action]['sum_rewards']+=reward
+	rewards = np.array(rewards)
+	sum_rewards = np.sum(rewards, axis = 0)
+	regret = max(sum_rewards)/T - sum([el[1] for el in history])/ T
+	return ((max(sum_rewards) / T),(sum([el[1] for el in history])/ T),regret)
+```
+Let $$k = 3$$, mean rewards be $$[0,0.3,1]$$ and T = 50000.
+The results are:
+|algorithm | Expected reward of optimal arm | Average reward in each round | average Regret in each round|
+|---|---|---|---|
+|Explore_then_commit|0.83454|0.04437|0.79016|
+|EGreedy|0.68796|0.23788|0.45008|
+|Successive_elimination|0.92911|0.09626|0.83285|
+|UCB1|0.89915|0.09995|0.7992|
+|EXP3|0.53629|0.51533|0.02097|
+|MultiLayer_active_arm_elimination|0.65429|0.12936|0.52493|
+##### Stochastic bandits with finite corruption:
+Let's simulate the case, where the rewards are drawn from an i.i.d. assumption, but an adversary can inject a finite amount of adversarial noise in order to increase the regret of the algorithm.
+There can be many strategies for the adversary, but we are using a strategy that whenever the algorithm has greater than $$1/K$$ probabilty of choosing the best arm, it reduces its reward by 5 and increases reward of all other arms by 5.
+The simulation code is as follows:
+```python
+def simulate_stochastic_bandits_with_finite_corruption(k,T,mean_rewards,corruption_limit,solver):
+	actions = list(range(k))
+	reward_dict = {action: { 'num_pulls': 0, 'sum_rewards':0} for action in actions}
+	history = []
+	rewards = []
+	corruption_used = 0
+	mab = solver(actions, T)
+	best_arm = mean_rewards.index(max(mean_rewards))
+	for iteration in range(T):
+		weights = np.array(mab.get_weights(actions,history,reward_dict,T), dtype=np.float64)
+		weights /= sum(weights)
+
+		current_rewards = [ np.random.normal(loc = mean_rewards[i] , scale = 1) for i in range(k) ]
+
+		if weights[best_arm] >= 1/k and corruption_used < corruption_limit:
+			# for i in range(1,k):
+				# current_rewards[i] -= 1
+			for i in range(0,k):
+				if i != best_arm:
+					current_rewards[i] += 5
+			current_rewards[best_arm] -= 5
+			corruption_used +=5
+
+		chosen_action = mab.next_action(actions,history,reward_dict,T)
+		reward = current_rewards[chosen_action]
+		reward = max(-5, reward)
+		reward = min(6,reward)
+		mab.update(chosen_action,reward,history,reward_dict,T)
+		rewards.append(current_rewards)
+		history.append( (chosen_action , reward) )
+		reward_dict[chosen_action]['num_pulls']+=1
+		reward_dict[chosen_action]['sum_rewards']+=reward
+	rewards = np.array(rewards)
+	sum_rewards = np.sum(rewards, axis = 0)
+	regret = max(sum_rewards) / T - sum([el[1] for el in history])/ T
+	return ((max(sum_rewards) / T),(sum([el[1] for el in history])/ T),regret)
+```
+Lets, run with mean rewards as $$[0,0.3,1]$$, $$T = 50000$$ and corruption limit as $$1000$$
+The results are:
+|algorithm | Expected reward of optimal arm | Average reward in each round | average Regret in each round|
+|---|---|---|---|
+|Explore_then_commit|0.98127|0.81756|0.16371|
+|EGreedy|0.98259|0.79073|0.19187|
+|Successive_elimination|1.00005|0.29011|0.70994|
+|UCB1|1.00494|0.2935|0.71144|
+|EXP3|0.98156|0.90013|0.08142|
+|MultiLayer_active_arm_elimination|0.97867|0.90995|0.06872|
+
+Let's run this again but with 5000 corruption limit.
+The results are:
+|algorithm | Expected reward of optimal arm | Average reward in each round | average Regret in each round|
+|---|---|---|---|
+|Explore_then_commit|0.78748|-0.14557|0.93305|
+|EGreedy|0.91015|0.29252|0.61763|
+|Successive_elimination|1.0133|0.29311|0.72019|
+|UCB1|0.99455|0.29764|0.69691|
+|EXP3|0.68337|0.62596|0.05741|
+|MultiLayer_active_arm_elimination|0.6608|0.01886|0.64194|
+
+### Expected Regret vs Psuedo Regret:
+Throughout this article, we used the algorithm objective to minimize pseudo-regret. Another similar objective could be to minimze expected regret.
+Expected regret $$\mathbb E [R] = \mathbb E \big [\max_a\sum_tX_{a,t} - \sum_t X_{a_t,t}\big]$$.
+Whereas our psedo regret is $$\overline R = \max_a \mathbb E\big[ \sum_t X_{a,t}  - \sum_{t}X_{a_t,t}\big]$$.
+Since pseudo regret is the expected deficit from optimal action whereas expected regret is expectation of regret with the action that is optimal.
+The expected regret is a stronger notion and $$\overline R \leq \mathbb E [R]$$.
+Here is a simulation to highlight that Expected regret is $$\geq$$ pseudo-regret.
+it shows that for normal rewards with mean $$= [1 , 0.5, 0.99 , 0.9 , 0.2  , 0.1 , 0]$$
+$$E[\max_a \sum_t X_{a,t}] \geq \max_a\mathbb E[\sum_t X_{a,t}]$$
+```python
+def expected_vs_psuedo_regret():
+	T = 1000
+	mean_rewards = [1 , 0.5, 0.99 , 0.9 , 0.2  , 0.1 , 0]
+	k = len(mean_rewards)
+	alpha = np.random.normal(loc = mean_rewards, scale = 1, size = (T,k))
+	alpha = np.sum(alpha, axis = 0)
+	alpha /= T
+	expected_max_avg_value = max(alpha)
+	max_expected_value = max(mean_rewards)
+	return expected_max_avg_value - max_expected_value
+```
+Running this simulation 10000 times, average difference $$E[\max_a \sum_t X_{a,t}] - \max_a\mathbb E[\sum_t X_{a,t}]$$ was: 0.013302.
+
+The happens because with arms that are close to optimal, like with mean 0.99, instead of 1, there is a chance that their sum of reward is greater than the sum of reward by the actual optimal arm. 
+
+This difference vanishes as T increases, running the same simulation with $$T = 10000$$ , 10 times the previous , the average difference was: 0.0019969. about a tenthc of the previous difference.
+
+
+
+
+
 
 
 
