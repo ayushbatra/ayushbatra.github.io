@@ -41,7 +41,7 @@ For this article, let's assume that all stochastic rewards are drawn from Normal
 
 ##### Explore-then-commit:
 
-Let's start with a simple algorithm: explore arms uniformly selecting each action $$N$$ times *(exploration phase)* then committing to the best arm for the remaining $$T-NK$$ rounds *(exploitation phase)*.
+Let's start with a simple algorithm: explore arms uniformly selecting each action $$N$$ times *(exploration phase)* and then committing to the best arm for the remaining $$T-NK$$ rounds *(exploitation phase)*.
 This simple-looking algorithm suffers from sub-linear i.e. o(T) regret.
 Proof sketch: 
 From [Hoeffding's inequality](https://en.wikipedia.org/wiki/Hoeffding%27s_inequality)[^1], we can infer that if $$N$$ is chosen large enough, then the mean reward for each arm estimated by sampling in the exploration phase is almost equal to the true mean reward of the arm. Then the total regret for exploration rounds is bounded by $$NK$$ times $$\max_{a\in[K]}\Delta_a$$, and the total regret in exploration rounds should be close to negligible.
@@ -139,7 +139,7 @@ One drawback with the previous two algorithms is that the exploration phase is c
 Based on this idea here is an algorithm that achieves better regret guarantees.
 
 We have earlier shown that with a very high probability, the empirical mean and the true mean are within $$\delta_{a,t} = \sqrt{\frac{2\cdot121\cdot\log T}{n_t(a)}}$$ difference. Based on this, for any arm at any time instance, we assume a window where its true mean lies.  $$\mu_a \in [\overline\mu_{a,t} - \delta_{a,t} , \overline\mu_{a,t} + \delta_{a,t}]$$
-If at any time, we observe that the upper limit of the true mean for an arm is less than the lower limit of true mean of another arm, we can safely assume that this arm is not the optimal arm.
+If at any time, we observe that the upper limit of the true mean for an arm is less than the lower limit of the true mean of another arm, we can safely assume that this arm is not the optimal arm.
 The algorithm protocol is as follows: initially, all arms are active. If the upper limit of the mean reward of an arm becomes less than the lower limit of the mean reward of any other arm, mark this arm as inactive. Select any active arm at random.
 This algorithm achives $$O(\sqrt{KT\log T})$$ regret bound.
 Proof Sketch: For any arm $$a_0$$, that was last pulled at time $$t_0$$, then 
@@ -227,11 +227,11 @@ $$\implies \mathbb{E}[ \tilde l_{a_0,t}] = \sum_{a\in[K]} P_{a,t} \times \frac{l
 After the cumulative loss of each arm is known, the probability distribution for selecting an arm $$a_0$$ is an exponential weight of the loss of that arm.
 
 $$P_{a_0,t} = \frac{\exp(-\eta_t \tilde L_{a_0,t}) }{\sum_a \exp(-\eta \tilde L_{a,t})}$$ for $$\eta \geq 0$$.
-For large $$\eta$$ the algorithm tends to exploit the result and aggressively choose arms with less cumulative loss, on the other hand with smaller $$\eta$$ it tends to explore more, and when $$\eta = 0$$ it chooses all arms with equal liklihood.
+For large $$\eta$$ the algorithm tends to exploit the result and aggressively choose arms with less cumulative loss, on the other hand with smaller $$\eta$$ it tends to explore more, and when $$\eta = 0$$ it chooses all arms with equal likelihood.
 If exp-3 is run with $$\eta = \sqrt{\frac{2\log K}{TK} }$$ the pseudo-regret is $$\mathbb E[R] = O(\sqrt{TK\log K})$$.
 
 Proof Sketch:  Let $$w_{a,t} = e^{-\eta \tilde L_{a,t}}$$ and $$W_{t} = \sum w_{a,t} = \sum e^{-\eta \tilde L_{a,t}}$$
-The proof is using the idea that we can lower bound the total reduction in  $$W_T$$ with the total loss incurred for any one arm. And for each round, whenever some loss $$l_{a_t,t}$$ is observed, $$W_t$$ can be upper bounded by the amount is reduces. Using the two bound, we can show that the total loss occured by the algorithm is not much larger than loss occured by the best arm.
+The proof is using the idea that we can lower bound the total reduction in  $$W_T$$ with the total loss incurred for any one arm. And for each round, whenever some loss $$l_{a_t,t}$$ is observed, $$W_t$$ can be upper bounded by the amount it reduces. Using the two bounds, we can show that the total loss incurred by the algorithm is not much larger than the loss incurred by the best arm.
 
 Here is how the proof flows:
 
@@ -249,7 +249,7 @@ rearranging the term in the equation, we get: $$\sum_{t\in[T]}\sum_{b\in[K]}p_{b
 Now, using the expected value, $$\mathbb E[\sum_{t\in[T]}\sum_{b\in[K]}p_{b,t}\tilde l_{b,t} - \sum_t \tilde l_{a,t}] = \mathbb E[\sum_t l_{a_t,t} - \sum_t l_{a,t}]$$ and definition of regret $$R = max_a\mathbb E[\sum l_{a_t,t} - \sum l_{a,t}]$$
 
 we get the following bound on the regret. $$\implies R \leq \frac{\log K}{\eta} + \frac{\eta}{2}\sum_t\sum_b p_{b,t}\mathbb E [\tilde l_{b,t}^2] = \frac{\log K}{\eta} + \frac{\eta}{2}\sum_t\sum_b l_{b,t}^2 = \frac{\log K}{\eta} + \frac{\eta}{2}KT\Delta \text{ ; where }\Delta = \max_a \Delta_a$$
-A python code implementation of the above algorithm looks like:
+A Python code implementation of the above algorithm looks like:
 ```python
 class EXP3:
 	def __init__(self,actions,T):
@@ -274,7 +274,7 @@ class EXP3:
 Both Stochastic and adversarial bandits swing too far with their assumptions on the reward scenarios. Here we want to discuss the work of Lykouris, Mirrokni, and Paes Leme (2018)[^3]
 [^3]: {Lykouris, Thodoris, Mirrokni, Vahab, & Paes Leme, Renato. (2018). *Stochastic bandits robust to adversarial corruptions*. In *Proceedings of the 50th Annual ACM SIGACT Symposium on Theory of Computing* (pp. 114–122).}
 
-Another approach on the reward assumption can be in a middle ground, in this model we assume that rewards are initially drawn from a fixed distribtion, but are adultereated with a finite amount of corruption by an adaptive adversary. 
+Another approach to the reward assumption can be in a middle ground, in this model we assume that rewards are initially drawn from a fixed distribution, but are adulterated with a finite amount of corruption by an adaptive adversary. 
 | **Protocol:** |
 |------------------|
 | ***Parameters***: $$K$$ arms, $$T$$ rounds, $$T > K$$, for any time $$t\in[T]$$ the environment chooses reward $$X_{a,t}$$ for each arm $$a \in [K]$$ from distribution $$D_a$$. The adversary chooses a corruption $$c_{a,t}$$ based on the algorithm protocol and the history of all chosen actions and rewards. The total corruption is bounded: $$\sum_t max_a \lvert c_{a,t}\rvert \text{  }\leq C$$.
@@ -283,9 +283,9 @@ Another approach on the reward assumption can be in a middle ground, in this mod
 By varying the total corruption this model generalizes both stochastic and adversarial bandits.
 
 ##### Multi-layer Active Arm Elimination Race:
-This algorithm extends successive elimination. In successive elimination, we kept a record of all active arms, and eliminated arms, under assumption of clean event, if they could not be the best arms. The idea is similar, but instead of keeping a single such list, the algorithm maintains multiple such lists, let's call them layers(assume $$n$$ layers). In each round, it selects a layer with probability $$\propto_{\approx} 2^{-n}$$. The layer n, updates its dictionaries of number of arm pulls and empirical means, only when the layer is selected. The result of each subsequent layer is more robust to the corruption, since they are only likely to admit $$2^{-n}$$ times the corruption, in their dictionaries. Whenever a layer $$n$$ concludes that an arm $$a$$ needs to be eliminated all its previous layer, also remove that arm. In case a layer is selected but has no active arms, it selects the arm based on next smallest layer that is not empty.
+This algorithm extends successive elimination. In successive elimination, we kept a record of all active arms and eliminated arms, under the assumption of clean event if they could not be the best arms. The idea is similar, but instead of keeping a single such list, the algorithm maintains multiple such lists, let's call them layers(assume $$n$$ layers). In each round, it selects a layer with probability $$\propto_{\approx} 2^{-n}$$. The layer n updates its dictionaries of the number of arm pulls and empirical means, only when the layer is selected. The result of each subsequent layer is more robust to the corruption since they are likely to only admit about $$2^{-n}$$ times the corruption, in their dictionaries. Whenever a layer $$n$$ concludes that an arm $$a$$ needs to be eliminated from all its previous layers, also remove that arm. In case a layer is selected but has no active arms, it selects the arm based on the next smallest layer that is not empty.
 
-A python code implementation of the above algorithm looks like:
+A Python code implementation of the above algorithm looks like:
 ```python
 class MultiLayer_active_arm_elimination:
 	def __init__(self,actions,T):
@@ -354,7 +354,7 @@ class MultiLayer_active_arm_elimination:
 ```
 ### Simulations:
 
-Now that we have introduced all the algorithms, let's see how they practically fair, but running some simulations.
+Now that we have introduced all the algorithms, let's see how they practically fare, by running some simulations.
 ##### Stochastic Bandits:
 Consider the case of when the rewards follow i.i.d. assumption at each time step.
 The simulation code is as follows:
@@ -383,7 +383,7 @@ def simulate_stochastic_bandits(k, T, mean_rewards , solver):
 	regret = max(mean_rewards) - sum([el[1] for el in history])/T
 	return( max(mean_rewards) , sum([el[1] for el in history])/T  , regret )
 ```
-Here, history is a list of tuple of action chosen and reward observed, reward dictionary maintains number of pulls and sum of rewards for each action. The simulation returns maximum of expected reward for an arm, the average reward observed the algorithm, and the regret divided by T suffered by the algorithm.
+Here, history is a list of tuples of actions chosen and rewards observed, the reward dictionary maintains the number of pulls and sum of rewards for each action. The simulation returns the maximum expected reward for an arm, the average reward observed by the algorithm, and the average regret suffered by the algorithm.
 
 Let's observe the regret for $$k = 3$$, with mean rewards be $$[0,0.3,1]$$ and $$T = 50000$$.
 The results are:
@@ -398,7 +398,7 @@ The results are:
 
 
 ##### Stochastic Bandits with switched mean:
-Let's simulate in another scenario in which the mean rewards are switched after T/2 rounds.
+Let's simulate another scenario in which the mean rewards are switched after T/2 rounds.
 
 The simulation code is as follows:
 ```python
@@ -435,7 +435,7 @@ The results are:
 |MultiLayer_active_arm_elimination|1.0|0.45982|0.54018|
 
 ##### Adaptive Adversarial bandits:
-Let's simulate the case where the adverary for the first T/10 rounds, simulates a stochastic bandits, and then sets reward for each arm either 0 or 1, depending if the probabilty of it getting pulled is greater or less than $$1/K$$.
+Let's simulate the case where the adversary for the first T/10 rounds, simulates stochastic bandits, and then sets the reward for each arm either 0 or 1, depending if the probability of it getting pulled is greater or less than $$1/K$$.
 The simulation code is as follows:
 ```python
 def simluate_adaptive_adversarial_bandits(k,T,mean_rewards,solver):
@@ -478,7 +478,7 @@ The results are:
 |MultiLayer_active_arm_elimination|0.65429|0.12936|0.52493|
 ##### Stochastic bandits with finite corruption:
 Let's simulate the case, where the rewards are drawn from an i.i.d. assumption, but an adversary can inject a finite amount of adversarial noise in order to increase the regret of the algorithm.
-There can be many strategies for the adversary, but we are using a strategy that whenever the algorithm has greater than $$1/K$$ probabilty of choosing the best arm, it reduces its reward by 5 and increases reward of all other arms by 5.
+There can be many strategies for the adversary, but we are using a strategy that whenever the algorithm has greater than $$1/K$$ probability of choosing the best arm, it reduces its reward by 5 and increases the reward of all other arms by 5.
 The simulation code is as follows:
 ```python
 def simulate_stochastic_bandits_with_finite_corruption(k,T,mean_rewards,corruption_limit,solver):
@@ -529,7 +529,7 @@ The results are:
 |EXP3|0.98156|0.90013|0.08142|
 |MultiLayer_active_arm_elimination|0.97867|0.90995|0.06872|
 
-Let's run this again but with 5000 corruption limit.
+Let's run this again but with a 5000 corruption limit.
 The results are:
 |algorithm | Expected reward of optimal arm | Average reward in each round | average Regret in each round|
 |---|---|---|---|
@@ -541,10 +541,10 @@ The results are:
 |MultiLayer_active_arm_elimination|0.6608|0.01886|0.64194|
 
 ### Expected Regret vs Psuedo Regret:
-Throughout this article, we used the algorithm objective to minimize pseudo-regret. Another similar objective could be to minimze expected regret.
+Throughout this article, we used the algorithm objective to minimize pseudo-regret. Another similar objective could be to minimize expected regret.
 Expected regret $$\mathbb E [R] = \mathbb E \big [\max_a\sum_tX_{a,t} - \sum_t X_{a_t,t}\big]$$.
 Whereas our psedo regret is $$\overline R = \max_a \mathbb E\big[ \sum_t X_{a,t}  - \sum_{t}X_{a_t,t}\big]$$.
-Since pseudo regret is the expected deficit from optimal action whereas expected regret is expectation of regret with the action that is optimal.
+Since pseudo regret is the expected deficit from optimal action whereas expected regret is the expectation of regret with the action that is optimal.
 The expected regret is a stronger notion and $$\overline R \leq \mathbb E [R]$$.
 Here is a simulation to highlight that Expected regret is $$\geq$$ pseudo-regret.
 it shows that for normal rewards with mean $$= [1 , 0.5, 0.99 , 0.9 , 0.2  , 0.1 , 0]$$
@@ -563,6 +563,6 @@ def expected_vs_psuedo_regret():
 ```
 Running this simulation 10000 times, average difference $$E[\max_a \sum_t X_{a,t}] - \max_a\mathbb E[\sum_t X_{a,t}]$$ was: 0.013302.
 
-The happens because with arms that are close to optimal, like with mean 0.99, instead of 1, there is a chance that their sum of reward is greater than the sum of reward by the actual optimal arm. 
+This happens because with arms that are close to optimal, like with mean 0.99, instead of 1, there is a chance that its sum of rewards is greater than the sum of rewards by the actual optimal arm. 
 
-This difference vanishes as T increases, running the same simulation with $$T = 10000$$ , 10 times the previous , the average difference was: 0.0019969. about a tenthc of the previous difference.
+This difference vanishes as T increases, running the same simulation with $$T = 10000$$, 10 times the previous, the average difference was: 0.0019969. about a tenth of the previous difference.
