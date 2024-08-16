@@ -214,18 +214,33 @@ $$$
 Here, $$\tilde l_{a_0,t}$$ can be calculated for all arms $$a\in[K]$$ irrespective if it were pulled or not. The cummulative loss is $$\tilde L_{a,t} = \sum_{i\leq t}\tilde l_{a,i}$$.
 The expected value of $$\tilde l_{a,t}$$ in round $$t$$ is equal to the actual loss of the arm $$l_{i,t}$$.
 (*Using $$P_{a,t}$$ for $$\mathbb{P}[a_t = a]$$.*)
-$$\implies \mathbb{E}[ \tilde l_{a_0,t}] = \sum_{a\in[K]} P_{a,t} \times \frac{l_{a,t}\cdot \mathbb{I}\{a=a_0\}}{P_{a,t}} = l_{a_0,t}$$
-After the cummulative loss of each arm is known, the probability distribution for selecting an arm $$a_0$$ is an exponential weight of the loss of that arm.
+$$\implies \mathbb{E}[ \tilde l_{a_0,t}] = \sum_{a\in[K]} P_{a,t} \times \frac{l_{a,t}\cdot \mathbb{I}\{a=a_0\}}{P_{a,t}} = l_{a_0,t}$$ and $$\mathbb E[\tilde l_{a,t}^2] = \frac{l_{a,t}^2}{p_{a,t}}$$
+
+After the cummulative loss of each arm is known, the probability distribution for selecting an arm $$a_0$$ is an exponential weight of the loss of that arm.(note: can add citation for more exp weight in series predictions)
+
 $$P_{a_0,t} = \frac{\exp(-\eta_t \tilde L_{a_0,t}) }{\sum_a \exp(-\eta \tilde L_{a,t})}$$ for $$\eta \geq 0$$.
 For large $$\eta$$ the algorithm tends to exploit the result and aggressively choose arms with less cummulative loss, on the other hand with smaller $$\eta$$ it tends to explore more, and when $$\eta = 0$$ it chooses all arms with equal liklihood.
 If exp-3 is run with $$\eta = \sqrt{\frac{2\log K}{TK} }$$ the pseudo-regret is $$\mathbb E[R] = O(\sqrt{TK\log K})$$.
-Proof Sketch:
 
+Proof Sketch:  Let $$w_{a,t} = e^{-\eta \tilde L_{a,t}}$$ and $$W_{t} = \sum w_{a,t} = \sum e^{-\eta \tilde L_{a,t}}$$
+The proof is using the idea that we can lower bound the total reduction in  $$W_T$$ with the total loss incurred for any one arm. And for each round, whenever some loss $$l_{a_t,t}$$ is observed, $$W_t$$ can be upper bounded by the amount is reduces. Using the two bound, we can show that the total loss occured by the algorithm is not much larger than loss occured by the best arm.
 
+Here is how the proof flows:
 
+We can upper bound $$\frac{W_T}{W_0}$$ by the total Loss of any arm as: 
+$$\log(\frac{W_T}{W_0}) = \log(\frac{\sum_a e^{-\eta \tilde L_{a,T}}}{K}) \geq -log K - \eta \tilde L_{a,T}\text{        }\forall a\in[K]$$
 
+and for any one round $$t$$, we can lower bound $$\frac {W_t}{W_{t-1}}$$ by the loss incurred in that round by:
+$$\log(\frac{W_t}{W_{t-1}}) = \log{( \sum_a \frac{w_{a,t}}{W_{t-1}}\cdot e^{-\eta\tilde l_{a,t}}  )}=\log{( \sum_a p_{a,t}\cdot e^{-\eta\tilde l_{a,t}}  )} \leq \log{( \sum_a p_{a,t}\cdot (1-\eta\tilde l_{a,t}+\frac{\eta^2}{2}\tilde l_{a,t}^2)  )}\leq \sum_a p_{a,t}(-\eta\tilde l_{a,t}+\frac{\eta^2}{2}\tilde l_{a,t}^2)$$
+This is using: $$e^x \leq 1+x+\frac{x^2}{2}\forall x \leq 0\text{ and }e^x \geq 1+x$$
 
+By using bound 1 along with repeated application of bound 2 for all $$t$$.
+We get that  $$\forall a: -log K - \eta \tilde L_{a,T} \leq \sum_{t\in[T]}\sum_b p_{b,t}(-\eta\tilde l_{b,t}+\frac{\eta^2}{2}\tilde l_{b,t}^2)$$
+rearranging the term in the equation, we get: $$\sum_{t\in[T]}\sum_{b\in[K]}p_{b,t}\tilde l_{b,t} - \sum_t \tilde l_{a,t} \leq \frac{\log K}{\eta} + \frac{\eta}{2}\sum_{t\in[T]}\sum_{b\in[K]}p_{b,t}\tilde l_{b,t}^2\text{  } \forall a$$
 
+Now, using the expected value, $$\mathbb E[\sum_{t\in[T]}\sum_{b\in[K]}p_{b,t}\tilde l_{b,t} - \sum_t \tilde l_{a,t}] = \mathbb E[\sum_t l_{a_t,t} - \sum_t l_{a,t}]$$ and definition of regret $$R = max_a\mathbb E[\sum l_{a_t,t} - \sum l_{a,t}]$$
+
+we get the following bound on the regret. $$\implies R \leq \frac{\log K}{\eta} + \frac{\eta}{2}\sum_t\sum_b p_{b,t}\mathbb E [\tilde l_{b,t}^2] = \frac{\log K}{\eta} + \frac{\eta}{2}\sum_t\sum_b l_{b,t}^2 = \frac{\log K}{\eta} + \frac{\eta}{2}KT\Delta \text{ ; where }\Delta = \max_a \Delta_a$$
 A python code implementation of the above algorithm looks like:
 ```python
 class EXP3:
@@ -233,10 +248,10 @@ class EXP3:
 		self.k = len(actions)
 		self.L = np.zeros(self.k)
 		self.p = None
+		self.eta = np.sqrt( np.log(self.k) / (T*self.k)  )
 	def get_weights(self, actions, history, reward_dict, T):
 		t = len(history)+1
-		eta = np.sqrt( np.log(self.k) / (t*self.k)  )
-		return [ np.exp(-1 * self.L[i]*eta) for i in range(self.k)  ]
+		return [ np.exp(-1 * self.L[i]*self.eta) for i in range(self.k)  ]
 	def next_action(self, actions , history , reward_dict , T):
 		self.p = np.array(self.get_weights(actions, history, reward_dict, T))
 		self.p /= np.sum(self.p)
@@ -247,7 +262,8 @@ class EXP3:
 		self.p = None
 		return
 ```
-
+#### Stochastic Bandits with Adversarial Corruption:
+Both Stochastic and adversarial bandits swing too far with their assumptions on the reward scenraios. We can confirm a middle ground
 
 
 
