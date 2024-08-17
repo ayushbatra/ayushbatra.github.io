@@ -166,9 +166,7 @@ class Successive_elimination:
 	def next_action(self, actions, history, reward_dict, T):
 		return choose_action(self.get_weights(actions, history, reward_dict, T))
 	def update(self, chosen_action, reward, history , reward_dict, T):
-		if len(history) < self.k:
-			return
-		if len(self.active_actions) <= 1:
+		if len(history) < self.k or len(self.active_actions) <= 1:
 			return
 		highest_lower_bound = max( [ reward_dict[action]['sum_rewards']/reward_dict[action]['num_pulls'] - self.radius(reward_dict[action]['num_pulls']) for action in self.active_actions ] )
 		remaining_actions = [ action for action in self.active_actions if reward_dict[action]['sum_rewards']/reward_dict[action]['num_pulls'] + self.radius(reward_dict[action]['num_pulls']) > highest_lower_bound ]
@@ -325,22 +323,17 @@ class MultiLayer_active_arm_elimination:
 				self.sum_rewards[layer][chosen_action]+=reward
 			self.chosen_layer = None
 			return
-
 		self.num_pulls[self.chosen_layer][chosen_action]+=1
 		self.sum_rewards[self.chosen_layer][chosen_action]+=reward
-
 		if len(self.active_arms[self.chosen_layer]) <= 1:
 			self.chosen_layer = None
 			return
-
 		lower_bounds = [ (			
 			self.sum_rewards[self.chosen_layer][arm]/self.num_pulls[self.chosen_layer][arm] 
 			- self.radius(self.num_pulls[self.chosen_layer][arm])			
 			)
 			 for arm in self.active_arms[self.chosen_layer] ]
-		
 		highest_lower_bound = max(lower_bounds)
-
 		self.active_arms[self.chosen_layer] = [arm for arm in self.active_arms[self.chosen_layer]
 				if (
 				self.sum_rewards[self.chosen_layer][arm]/self.num_pulls[self.chosen_layer][arm]
@@ -348,16 +341,17 @@ class MultiLayer_active_arm_elimination:
 				 ) 
 					> highest_lower_bound 
 				]
-
 		for i in range(self.chosen_layer):
 			self.active_arms[i] = list(set(self.active_arms[i]) & set(self.active_arms[self.chosen_layer]))
-
 		self.chosen_layer = None
 		return
 ```
+
+
 ### Simulations:
 
 Now that we have introduced all the algorithms, let's see how they practically fare, by running some simulations.
+
 ##### Stochastic Bandits:
 Consider the case of when the rewards follow i.i.d. assumption at each time step.
 The simulation code is as follows:
@@ -365,12 +359,9 @@ The simulation code is as follows:
 def simulate_stochastic_bandits(k, T, mean_rewards , solver):
 	assert k == len(mean_rewards)
 	actions = list(range(k))
-
 	reward_dict = {action: { 'num_pulls': 0, 'sum_rewards':0} for action in actions}
-
 	# a list of tuple of action chosen and reward observed
 	history = [  ]
-
 	mab = solver(actions, T)
 	for iteration in range(T):
 		chosen_action = mab.next_action(actions,history,reward_dict,T)
@@ -423,7 +414,6 @@ def simulate_switchmean_stochastic_bandits(k,T,mean_rewards,switched_rewards,sol
 		reward_dict[chosen_action]['num_pulls']+=1
 		reward_dict[chosen_action]['sum_rewards']+=reward
 	regret =  max(mean_rewards) * (1/2) + max(switched_rewards)*(1/2) - sum([el[1] for el in history])/T
-
 	return((max(mean_rewards) * (1/2) + max(switched_rewards)*(1/2) ),(sum([el[1] for el in history])/T),regret)
 ```
 Let's observe the regret for $$k = 3$$, with mean rewards be $$[0,0.3,1]$$ and switched rewards be $$[1,0.3,0]$$ and $$T = 50000$$.
@@ -495,9 +485,7 @@ def simulate_stochastic_bandits_with_finite_corruption(k,T,mean_rewards,corrupti
 	for iteration in range(T):
 		weights = np.array(mab.get_weights(actions,history,reward_dict,T), dtype=np.float64)
 		weights /= sum(weights)
-
 		current_rewards = [ np.random.normal(loc = mean_rewards[i] , scale = 1) for i in range(k) ]
-
 		if weights[best_arm] >= 1/k and corruption_used < corruption_limit:
 			# for i in range(1,k):
 				# current_rewards[i] -= 1
@@ -506,7 +494,6 @@ def simulate_stochastic_bandits_with_finite_corruption(k,T,mean_rewards,corrupti
 					current_rewards[i] += 5
 			current_rewards[best_arm] -= 5
 			corruption_used +=5
-
 		chosen_action = mab.next_action(actions,history,reward_dict,T)
 		reward = current_rewards[chosen_action]
 		reward = max(-5, reward)
