@@ -78,18 +78,19 @@ def monty_hall_sim():
 
 After running the above simulation for 10,000 times, the probability of winning with changing the doors is:
 For Monty Hall Problem : 0.6653 $$\approx \frac{2}{3}$$
-For Not-Monty-Problem: 0.49126  $$\approx \frac{1}{2}$$
+For Not-Monty Hall Problem: 0.49126  $$\approx \frac{1}{2}$$
 
 Let's discuss the above result:
 
-When the contestant's observe that the host's door does not contain the prize, how does the random variable(of prize door) update with this new information.
+When the contestant observe's that the host's door does not contain the prize, how does the random variable(of prize door) update with this new information.
 Lets say the contestant had chosen the door A.
 
 
 This new probability distribution can be calculated by the the concept of Conditional Random Variable.
 
-$$=P( A \text{ is prize | One of randomly chosen B/C door is empty} )$$
+For the not-monty hall problem, 
 
+$$=P( A \text{ is prize | One of randomly chosen B/C door is empty} )$$
 $$= \frac{P( A \text{ is prize} \cap\text{ One of randomly chosen B/C door is empty}  )}{P(\text{One of randomly chosen B/C door is empty})}$$ 
 
 $$= \frac{P( A\text{ is prize})}{P(\text{One of randomly chosen B/C door is empty})}$$
@@ -112,9 +113,6 @@ $$= \frac{1/3}{1} = 1/3$$
 
 
 In this case, the probability of your previously selected door containing the gift is $$1/3$$, and hence, you chances of winning are higher if you choose to switch.
-
-
-
 
 
 
