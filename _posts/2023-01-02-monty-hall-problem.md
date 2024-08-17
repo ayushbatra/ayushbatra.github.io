@@ -82,10 +82,11 @@ For Not-Monty-Problem: 0.49126  $$\approx \frac{1}{2}$$
 
 Let's discuss the above result:
 
-When you observe that this door does not contain the prize, how does your random variable update with this new information. (Lets say you had chosen the door A)
+When the contestant's observe that the host's door does not contain the prize, how does the random variable(of prize door) update with this new information.
+Lets say the contestant had chosen the door A.
 
 
-This new probability distribution can be easily calculated by the the concept of Conditional Random Variable.
+This new probability distribution can be calculated by the the concept of Conditional Random Variable.
 
 $$=P( A \text{ is prize | One of randomly chosen B/C door is empty} )$$
 
