@@ -1,33 +1,86 @@
 ---
-title: "The Monty Hall Problem"
+title: "Monty Hall, A Misunderstood Problem"
 permalink: "/The_Monty_Hall_Problem/"
 layout: page
 mathjax: true
 ---
 
 
-The Monty Hall Problem is one of the most nefarious problems in stochastic mathematical modelling. It is a simple looking problem that perplexes most people when confronted with its dilemma. This article will try to generalize the MHP on how the host of the show chooses his door to better understand the problem.
+The Monty Hall Problem is a well-known puzzle in probability that may seem straightforward at first but is surprisingly tricky and confusing. This article will delve into the problem by examining how the host's choice of door affects the game, to better understand the problem.
+
 
 
 Let's consider, you are on a game show and the following happens:
 
-1. You are presented with 3 doors(Let {$$A$$, $$B$$, $$C$$} ) in front of you and told that exactly one of them hides a prize and other two are empty your task is to select the door with the prize.
-2. After you have made your selection, the host of the show selects a door that is not the same doors as yours.
-3. The host's door is opened and it is found that, that door does not hide the prize.
-4. You are offered to reconsider your option to the other unopened door or you can stick with your current door, before your door is opened and it is revelaed whether your task was succesful.
+1. You are presented with 3 doors(Let {$$A$$, $$B$$, $$C$$} ) in front of you and told that exactly one of them hides a prize and the other two are empty your task is to select a door.
+2. After you have made your selection, the host of the show selects a different door.
+3. The host's door is opened and it is revealed that that door does not hide the prize.
+4. You are offered to reconsider your option, you can select the other unopened door or you can stick with your current door.
 
 
 What should you do? which door has higher chances of containing  the prize.
 
 
-The above problem is a slightly perturbed version of the MHP, in the monty hall problem, you are given with a crucial piece of inforamtion about step 2 i.e. how the host chooses his door.
+The above problem is a slightly perturbed version of the MHP, in the monty hall problem, you are given with a crucial piece of inforamtion about step 2 i.e. how the host chooses his door. In MHP you are told that the host is aware of the price door and deliberately chooses the other door without the prize.
 
 
-Consider a not-Monty Hall problem , where the host is also unaware of the location of the prize and randomly chooses one of the other doors you haven't chosen. When you observe that this door does not contain the prize, how does your random variable update with this new information. (Lets say you had chosen the door A)
+Now, consider a not-Monty Hall problem, where the host is also unaware of the location of the prize and randomly chooses one of the other doors. The remaining steps remain the same.
+
+Let's run a simulation, for monty hall and not-monty hall problem to see the probability of winning without changing the door choice.
+
+For the not-monty hall problem:
+{% highlight python %}
+
+def not_monty_hall_sim():
+	doors = ['a','b','c']
+	#Let the prize be randomly chosen
+	prize = random.choice( doors )
+	#Your randomly chosen initial guess
+	contestant_choice = random.choice(doors)
+	#Host randomly choosing one of the remaining doors.
+	host_choice = random.choice(list(filter(lambda x:x!=contestant_choice, doors)))
+	#This is to satify the conditional information given to us.
+	# since we know that when the host choice was revealed it was not the prize doors
+	if (  host_choice == prize ):
+		# Abort the simulation
+		return (0,0)
+	#Returing the output, the first index is if the inital guess was correct, and the second index is if this is a valid iteration. 
+	if 	contestant_choice != prize:
+		return (1 , 1)
+	else:
+		return (0 , 1)	
+{% endhighlight %}
+
+
+For the standard monty hall problem
+
+{% highlight python %}
+def monty_hall_sim():
+	doors = ['a','b','c']
+	#Let the prize be randomly chosen
+	prize = random.choice( doors )
+	#Your randomly chosen initial guess
+	contestant_choice = random.choice(doors)
+	#Host randomly choosing one of the remaining doors, which is not the prize door
+ 	#Since, host is aware of the prize door and is deliberately choosing one that is not the prize door.
+	host_choice = random.choice(list(filter(lambda x:x!=contestant_choice and x!= prize, doors)))
+	#This is to satify the conditional statement given to us.
+ 	# since we know that when the host choice was revealed it was not the prize doors
+	if (  host_choice == prize ):
+		# Abort the simulation
+		return [0,0]
+	#Returing the output, the first index is if the inital guess was correct, and the second index is if this is a valid iteration. 
+	if 	contestant_choice != prize:
+		return [1 , 1]
+	else:
+		return [0 , 1]	
+{%endhighlight%}
+
+
+When you observe that this door does not contain the prize, how does your random variable update with this new information. (Lets say you had chosen the door A)
 
 
 This new probability distribution can be easily calculated by the the concept of Conditional Random Variable.
-
 
 $$=P( A \text{ is prize | One of randomly chosen B/C door is empty} )$$
 
@@ -58,57 +111,6 @@ In this case, the probability of your previously selected door containing the gi
 
 
 
-Lets verify this argument via a simulation, in case of monty hall and not-monty hall problem.
-
-
-For the not-monty hall problem:
-{% highlight python %}
-
-def not_monty_hall_sim():
-	doors = ['a','b','c']
-	#Let the prize be randomly chosen
-	prize = random.choice( doors )
-	#Your randomly chosen initial guess
-	contestant_choice = random.choice(doors)
-	#Host randomly choosing one of the remaining doors.
-	host_choice = random.choice(list(filter(lambda x:x!=contestant_choice, doors)))
-	#This is to satify the conditional information given to us.
-	# since we know that when the host choice was revealed it was not the prize doors
-	if (  host_choice == prize ):
-		# Abort the simulation
-		return (0,0)
-	#Returing the output, the first index is if the inital guess was correct, and the second index is if this is a valid iteration. 
-	if 	contestant_choice != prize:
-		return (1 , 1)
-	else:
-		return (0 , 1)	
-{% endhighlight %}
-
-
-
-For the standard monty hall problem
-
-{% highlight python %}
-def monty_hall_sim():
-	doors = ['a','b','c']
-	#Let the prize be randomly chosen
-	prize = random.choice( doors )
-	#Your randomly chosen initial guess
-	contestant_choice = random.choice(doors)
-	#Host randomly choosing one of the remaining doors, which is not the prize door
- 	#Since, host is aware of the prize door and is deliberately choosing one that is not the prize door.
-	host_choice = random.choice(list(filter(lambda x:x!=contestant_choice and x!= prize, doors)))
-	#This is to satify the conditional statement given to us.
- 	# since we know that when the host choice was revealed it was not the prize doors
-	if (  host_choice == prize ):
-		# Abort the simulation
-		return [0,0]
-	#Returing the output, the first index is if the inital guess was correct, and the second index is if this is a valid iteration. 
-	if 	contestant_choice != prize:
-		return [1 , 1]
-	else:
-		return [0 , 1]	
-{%endhighlight%}
 
 Run the above simulation a large number of times to convince of correct probabilities.
 
