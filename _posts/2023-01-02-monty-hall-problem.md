@@ -111,18 +111,4 @@ $$= \frac{P( A\text{ is prize})}{P(\text{there exists a door not A, that does no
 
 $$= \frac{1/3}{1} = 1/3$$
 
-
-In this case, the probability of your previously selected door containing the gift is $$1/3$$, and hence, you chances of winning are higher if you choose to switch.
-
-
-
-Run the above simulation a large number of times to convince of correct probabilities.
-
-{% highlight python %}
-ans = [0,0]
-for i in range(10000):
-	t = (not_)monty_hall_sim()
-	ans[0] += t[0]
-	ans[1] += t[1]
-print("Winning Prob if not switching: " , ans[0]/ans[1])
-{%endhighlight%}
+In this case, the probability of your previously selected door containing the reward is $$1/3$$, and hence, you chances of winning are higher if you choose to switch.
