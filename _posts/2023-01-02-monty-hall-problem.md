@@ -26,7 +26,7 @@ The above problem is a slightly perturbed version of the MHP, in the monty hall 
 
 Now, consider a not-Monty Hall problem, where the host is also unaware of the location of the prize and randomly chooses one of the other doors. The remaining steps remain the same.
 
-Let's run a simulation, for monty hall and not-monty hall problem to see the probability of winning without changing the door choice.
+Let's run a simulation, for monty hall and not-monty hall problem to see the probability of winning with changing the door choice.
 
 For the not-monty hall problem:
 {% highlight python %}
@@ -76,6 +76,11 @@ def monty_hall_sim():
 		return [0 , 1]	
 {%endhighlight%}
 
+After running the above simulation for 10,000 times, the probability of winning with changing the doors is:
+For Monty Hall Problem : 0.6653 $$\approx \frac{2}{3}$$
+For Not-Monty-Problem: 0.49126  $$\approx \frac{1}{2}$$
+
+Let's discuss the above result:
 
 When you observe that this door does not contain the prize, how does your random variable update with this new information. (Lets say you had chosen the door A)
 
