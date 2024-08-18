@@ -294,7 +294,7 @@ $$\tilde l_{a_0,t} = \begin{cases}
 Here, $$\tilde l_{a_0,t}$$ can be calculated for all arms $$a\in[K]$$ irrespective if it were pulled or not.
 The cummulative loss is $$\tilde L_{a,t} = \sum_{i\leq t}\tilde l_{a,i}$$.
 
-The expected value of $$\tilde l_{a,t}$$ in round $$t$$ is equal to the actual loss of the arm $$l_{i,t}$$.
+The expected value of $$\tilde l_{a,t}$$ in round $$t$$ is equal to the actual loss of the arm $$l_{a,t}$$.
 
 (*Let $$P_{a,t}$$ be $$\mathbb{P}[a_t = a]$$.*)
 
