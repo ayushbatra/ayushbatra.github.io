@@ -326,7 +326,9 @@ $$\leq \log{( \sum_a p_{a,t}\cdot (1-\eta\tilde l_{a,t}+\frac{\eta^2}{2}\tilde l
 
 This is using: $$e^x \leq 1+x+\frac{x^2}{2}\forall x \leq 0\text{ and }e^x \geq 1+x$$
 
-By using bound 1 along with repeated application of bound 2 for all $$t$$.
+&nbsp;
+&nbsp;
+By using the previous bound along with repeated application of the above bound for all $$t$$.
 
 We get that  $$\forall a: -log K - \eta \tilde L_{a,T} \leq \sum_{t\in[T]}\sum_b p_{b,t}(-\eta\tilde l_{b,t}+\frac{\eta^2}{2}\tilde l_{b,t}^2)$$
 
