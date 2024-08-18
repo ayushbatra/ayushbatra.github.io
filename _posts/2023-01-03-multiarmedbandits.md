@@ -46,6 +46,7 @@ For this article, let's assume that all stochastic rewards are drawn from Normal
 
 &nbsp;
 &nbsp;
+&nbsp;
 
 
 #### Explore-then-commit:
@@ -218,6 +219,10 @@ class Successive_elimination:
 		self.active_actions = remaining_actions
 		return
 ```
+&nbsp;
+&nbsp;
+&nbsp;
+
 
 #### UCB1:
 Let us consider another approach with adaptive exploration. 
@@ -245,6 +250,11 @@ class UCB1:
 	def update(self, chosen_action, reward, history , reward_dict, T):
 		return
 ```
+&nbsp;
+&nbsp;
+&nbsp;
+
+
 ### Adversarial Bandits:
 
 Stochastic Bandits take a very strong assumption on the rewards of the actions. This strong assumption might limit the application and guarantees of the above algorithms where the i.i.d. assumption is violated. Adversarial bandits swing on the other side and take no assumption on the reward of each arm. 
@@ -258,6 +268,10 @@ No deterministic algorithm can hope to do well in this scenario, since the envir
 Even in this pessimistic scenario, we can guarantee some upper bounds on the regret suffered.
 In adversarial bandits, pseudo-regret is defined as the deficit suffered from the best arm policy. 
 $$E[R] = \max_{a\in[K]}\mathbb{E}\big[ \sum_{t\in[T]}X_{a,t} - \sum_{t\in[T]}X_{a_t,t} \big]$$ 
+&nbsp;
+&nbsp;
+&nbsp;
+
 
 #### EXP3:
 Let's define the loss of any reward as the difference between the maximum possible reward and the observed reward, scaled between 0 to 1, for our scenario, our rewards are bounded between -5 and 6, so our 
@@ -357,6 +371,10 @@ For a better understanding and complete proofs of the above algorithms, we refer
 
 **Lattimore, Tor, & Szepesvári, Csaba**. (2020). *Bandit algorithms*. Cambridge University Press.
 
+&nbsp;
+&nbsp;
+&nbsp;
+
 
 ### Stochastic Bandits with Adversarial Corruption:
 Both Stochastic and adversarial bandits swing too far with their assumptions on the reward scenarios. Here we want to discuss the work of Lykouris, Mirrokni, and Paes Leme (2018)
@@ -371,6 +389,10 @@ Another approach to the reward assumption can be in a middle ground, in this mod
 |For each round $$t \in [T]$$ the algorithm chooses an $$a_t\in[K]$$ and observes the corrupted reward $$X_{a_t,t}+c_{a,t}$$ |
 
 By varying the total corruption this model generalizes both stochastic and adversarial bandits.
+&nbsp;
+&nbsp;
+&nbsp;
+
 
 #### Multi-layer Active Arm Elimination Race:
 This algorithm extends successive elimination. In successive elimination, we kept a record of all active arms and eliminated arms, under the assumption of clean event if they could not be the best arms. The idea is similar, but instead of keeping a single such list, the algorithm maintains multiple such lists, let's call them layers(assume $$n$$ layers). In each round, it selects a layer with probability $$\propto_{\approx} 2^{-n}$$. The layer n updates its dictionaries of the number of arm pulls and empirical means, only when the layer is selected. The result of each subsequent layer is more robust to the corruption since they are likely to only admit about $$2^{-n}$$ times the corruption, in their dictionaries. Whenever a layer $$n$$ concludes that an arm $$a$$ needs to be eliminated from all its previous layers, also remove that arm. In case a layer is selected but has no active arms, it selects the arm based on the next smallest layer that is not empty.
@@ -435,11 +457,19 @@ class MultiLayer_active_arm_elimination:
 		self.chosen_layer = None
 		return
 ```
+&nbsp;
+&nbsp;
+&nbsp;
+
 
 
 ### Simulations:
 
 Now that we have introduced all the algorithms, let's see how they practically fare, by running some simulations.
+&nbsp;
+&nbsp;
+&nbsp;
+
 
 #### Stochastic Bandits:
 Consider the case of when the rewards follow i.i.d. assumption at each time step.
@@ -481,6 +511,10 @@ The results are:
 |UCB1|1.0|0.99574|0.00426|
 |EXP3|1.0|0.88704|0.11296|
 |MultiLayer_active_arm_elimination|1.0|0.94698|0.05302|
+&nbsp;
+&nbsp;
+&nbsp;
+
 
 
 #### Stochastic Bandits with switched mean:
@@ -520,6 +554,10 @@ The results are:
 |UCB1|1.0|0.99367|0.00633|
 |EXP3|1.0|0.50991|0.49009|
 |MultiLayer_active_arm_elimination|1.0|0.45982|0.54018|
+&nbsp;
+&nbsp;
+&nbsp;
+
 
 #### Adaptive Adversarial bandits:
 Let's simulate the case where the adversary for the first T/10 rounds, simulates stochastic bandits, and then sets the reward for each arm either 0 or 1, depending if the probability of it getting pulled is greater or less than $$1/K$$.
@@ -564,6 +602,10 @@ The results are:
 |UCB1|0.89915|0.09995|0.7992|
 |EXP3|0.53629|0.51533|0.02097|
 |MultiLayer_active_arm_elimination|0.65429|0.12936|0.52493|
+&nbsp;
+&nbsp;
+&nbsp;
+
 
 #### Stochastic bandits with finite corruption:
 Let's simulate the case, where the rewards are drawn from an i.i.d. assumption, but an adversary can inject a finite amount of adversarial noise in order to increase the regret of the algorithm.
@@ -615,6 +657,10 @@ The results are:
 |UCB1|1.00494|0.2935|0.71144|
 |EXP3|0.98156|0.90013|0.08142|
 |MultiLayer_active_arm_elimination|0.97867|0.90995|0.06872|
+&nbsp;
+&nbsp;
+&nbsp;
+
 
 
 ### Expected Regret vs Psuedo Regret:
