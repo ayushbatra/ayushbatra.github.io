@@ -91,6 +91,7 @@ This new probability distribution can be calculated by the the concept of Condit
 For the not-monty hall problem, 
 
 $$=P( A \text{ is prize | One of randomly chosen B/C door is empty} )$$
+
 $$= \frac{P( A \text{ is prize} \cap\text{ One of randomly chosen B/C door is empty}  )}{P(\text{One of randomly chosen B/C door is empty})}$$ 
 
 $$= \frac{P( A\text{ is prize})}{P(\text{One of randomly chosen B/C door is empty})}$$
