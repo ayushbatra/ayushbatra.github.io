@@ -144,7 +144,9 @@ Hence regret in round $$t$$ in expectation would be bounded by
 
 $$R_t \leq \epsilon_t \max \Delta_a + \Delta_{a_t}$$
 
-Since $$a_t$$ has highest empirical reward, we can use the clean event condition and argue that $$\lvert\mu_{a*} - \mu_{a_t}\rvert \le \delta_{a_t} + \delta_{a*} \leq \sqrt{\frac{2\cdot121\log t}{n_t(a*)}}+\sqrt{\frac{2\cdot121\log t}{n_t(a_t)}}$$
+Since $$a_t$$ has highest empirical reward, we can use the clean event condition and argue that 
+
+$$\lvert\mu_{a*} - \mu_{a_t}\rvert \le \delta_{a_t} + \delta_{a*} \leq \sqrt{\frac{2\cdot121\log t}{n_t(a*)}}+\sqrt{\frac{2\cdot121\log t}{n_t(a_t)}}$$
 
 $$\implies \mathbb{E}[R_t] \leq \epsilon_t\max_a \Delta_a + 2\sqrt{\frac{2\cdot2\cdot121\cdot k\log t}{\epsilon_t k}}$$
 
