@@ -12,7 +12,7 @@ The Monty Hall Problem is a well-known puzzle in probability that may seem strai
 
 Let's consider, you are on a game show and the following happens:
 
-1. You are presented with 3 doors(Let {$$A$$, $$B$$, $$C$$} ) in front of you and told that exactly one of them hides a prize and the other two are empty your task is to select a door.
+1. You are presented with 3 doors(Let $$\{A, B, C\}$$ ) in front of you and told that exactly one of them hides a prize and the other two are empty your task is to select a door.
 2. After you have made your selection, the host of the show selects a different door.
 3. The host's door is opened and it is revealed that that door does not hide the prize.
 4. You are offered to reconsider your option, you can select the other unopened door or you can stick with your current door.
@@ -83,6 +83,7 @@ for t in range(10000):
 print(ans[0]/ans[1])
 {%endhighlight%}
 For Monty Hall Problem : 0.6653 $$\approx \frac{2}{3}$$
+
 For Not-Monty Hall Problem: 0.49126  $$\approx \frac{1}{2}$$
 
 Let's discuss the above result:
