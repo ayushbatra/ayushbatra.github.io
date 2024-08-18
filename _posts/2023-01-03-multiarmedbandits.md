@@ -59,14 +59,14 @@ Proof sketch:
 From [Hoeffding's inequality](https://en.wikipedia.org/wiki/Hoeffding%27s_inequality), we can infer that if $$N$$ is chosen large enough, then the mean reward for each arm estimated by sampling in the exploration phase is almost equal to the true mean reward of the arm. Then the total regret for exploration rounds is bounded by $$NK$$ times $$\max_{a\in[K]}\Delta_a$$, and the total regret in exploration rounds should be close to negligible.
 
 
-<p style="font-size: small; font-style: italic;">T[Hoeffding's inequality](https://en.wikipedia.org/wiki/Hoeffding%27s_inequality) is a type of [Concentration inequality](https://en.wikipedia.org/wiki/Concentration_inequality), such inequalities come in useful for proving bounds on various bandits algorithms.</p>
+<p style="font-size: small; font-style: italic;"><a href = "https://en.wikipedia.org/wiki/Hoeffding%27s_inequality">Hoeffding's inequality</a> is a type of <a href = "https://en.wikipedia.org/wiki/Concentration_inequality">Concentration inequality</a>, such inequalities come in useful for proving bounds on various bandits algorithms.</p>
 
 Let $$\mu_a$$ be true mean of arm $$a$$ and $$\overline{\mu}_{a,t}$$ be the mean estimated by sampling untill round $$t$$. 
 Then, by [Hoeffding's inequality](https://en.wikipedia.org/wiki/Hoeffding%27s_inequality)
 
 $$\implies\mathbb{P}\big[ \lvert \mu_a - \overline{\mu}_{a,t} \rvert > \delta_{a,t} \big] \leq  2e^{\frac{-2n_a(t)\cdot\delta_{a,t}^2}{(6 - (-5 ))^2}} = 2e^{\frac{-2n_a(t)\cdot\delta_{a,t}^2}{121}}$$
 
-Let $$\delta_{a,t} = \sqrt{\frac{2\cdot 121\cdot log(T)}{n_a(t)}} \implies \mathbb{P}\big[ | \mu_a - \overline{\mu}_{a,t} | > \delta_{a,t} \big] \leq\frac{2}{T^4}$$
+Let $$\delta_{a,t} = \sqrt{\frac{2\cdot 121\cdot log(T)}{n_a(t)}} \implies \mathbb{P}\big[ \lvert \mu_a - \overline{\mu}_{a,t} \rvert > \delta_{a,t} \big] \leq\frac{2}{T^4}$$
 
 By Union Bound, $$\mathbb{P}\big[ \cup_{\forall a \in [K],t\in [T]} |\mu_a - \overline{\mu}_{a,t} | > \delta_{a,t}\big] \leq \sum_{t\in[T]}\sum_{a\in[K]} \frac{2}{T^4} \lt \frac{2}{T^4}$$[^2]
 [^2]: For this particular proof we don't need such a strict condition on the difference between empirical and true mean, this proof only requires that the empirical mean is close to the true mean for $$t = NK$$ and not all $$t\in[T]$$. But this extra condition will be helpful for further proofs.
