@@ -149,7 +149,7 @@ $$\implies \mathbb{E}[R_t] \leq \epsilon_t\max_a \Delta_a + 2\sqrt{\frac{2\cdot2
 
 Substituting the value of $$\epsilon_t$$ that minimizes the expression on RHS and then summing this value for all $$t\in [T]$$ gives the expected regret bound.
 
-$$\square$$
+<p style="text-align: right;">&#9633;</p>
 
 A Python code implementation of the above algorithm looks like: 
 ``` python
@@ -194,7 +194,7 @@ Now, $$n_{t_0}(a*) \approx n_{t_0}(a_0) = n_{T}(a_0)$$.
 Hence, $$\lvert\mu_{a*} - \mu_{a_0} \rvert \leq O(\sqrt{\frac{\log T}{n_{T}(a_0)}})$$.
 The total regret suffered from by pulling this arm multiple times is $$\leq O(\sqrt{\frac{\log T}{n_{T}(a_0)}})\times n_{T}(a_0)$$. On summing this quantity for all arms, the total regret for this algorithm can be bounded.
 
-$$\square$$
+<p style="text-align: right;">&#9633;</p>
 
 A Python code implementation of the above algorithm looks like:
 ```python
