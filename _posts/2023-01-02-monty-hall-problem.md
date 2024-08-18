@@ -82,6 +82,7 @@ for t in range(10000):
 	ans += not_monty_hall_sim()
 print(ans[0]/ans[1])
 {%endhighlight%}
+
 For Monty Hall Problem : 0.6653 $$\approx \frac{2}{3}$$
 
 For Not-Monty Hall Problem: 0.49126  $$\approx \frac{1}{2}$$
