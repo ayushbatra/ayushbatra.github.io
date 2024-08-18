@@ -72,7 +72,7 @@ $$\implies \mathbb{P}\big[ \lvert \mu_a - \overline{\mu}_{a,t} \rvert > \delta_{
 
 By Union Bound, $$\mathbb{P}\big[ \cup_{\forall a \in [K],t\in [T]} \lvert\mu_a - \overline{\mu}_{a,t} \rvert > \delta_{a,t}\big] \leq \sum_{t\in[T]}\sum_{a\in[K]} \frac{2}{T^4} \lt \frac{2}{T^4}$$
 
-<p style="font-size: small; font-style: italic;">For this particular proof we don't need such a strict condition on the difference between empirical and true mean, this proof only requires that the empirical mean is close to the true mean for $$t = NK$$ and not all $$t\in[T]$$. But this extra condition will be helpful for further proofs.</p>
+<p style="font-size: small; font-style: italic;">(For this particular proof we don't need such a strict condition on the difference between empirical and true mean, this proof only requires that the empirical mean is close to the true mean for $t = NK$ and not all $t\in[T]$. But this extra condition will be helpful for further proofs.)</p>
 
 
 Let the event that for all $$a\in[K]$$ and $$t\in[T]$$ , $$\lvert\mu_a - \overline \mu_{a,t}\rvert \leq \delta_{a,t}$$ be called clean event, and it occurs with probabilty $$\geq 1-O(\frac{1}{T^2})$$
