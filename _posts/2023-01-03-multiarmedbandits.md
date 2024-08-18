@@ -260,23 +260,27 @@ In adversarial bandits, pseudo-regret is defined as the deficit suffered from th
 $$E[R] = \max_{a\in[K]}\mathbb{E}\big[ \sum_{t\in[T]}X_{a,t} - \sum_{t\in[T]}X_{a_t,t} \big]$$ 
 
 #### EXP3:
-Let's define the loss of any reward as the difference between the maximum possible reward and the observed reward, scaled between 0 to 1, for our scenario, our rewards are bounded between -5 and 6, so our $$loss = \frac{-1}{11}\cdot(reward-6)$$ 
+Let's define the loss of any reward as the difference between the maximum possible reward and the observed reward, scaled between 0 to 1, for our scenario, our rewards are bounded between -5 and 6, so our 
+
+$$loss = \frac{-1}{11}\cdot(reward-6)$$ 
 
 The key idea in the exp3 algorithm is it tries to keep a record of cumulative loss for each arm. Since in any round reward/loss of only one action is observed keeping the exact record is not possible. The idea is to scale the loss with the inverse of the probability of observing it. 
 
 The loss of action $$a$$ at round $$t$$ is 
 
-$$$
-\tilde l_{a_0,t} = \begin{cases}
+
+$$\tilde l_{a_0,t} = \begin{cases}
     l_{a_t,t}/\mathbb{P}[a_t = a_0] & \text{if } a_t = a_0 \\ % & is your "\tab"-like command (it's a tab alignment character)
     0 & \text{otherwise.}
-\end{cases}
-$$$
+\end{cases}$$
 
-Here, $$\tilde l_{a_0,t}$$ can be calculated for all arms $$a\in[K]$$ irrespective if it were pulled or not. The cummulative loss is $$\tilde L_{a,t} = \sum_{i\leq t}\tilde l_{a,i}$$.
+
+Here, $$\tilde l_{a_0,t}$$ can be calculated for all arms $$a\in[K]$$ irrespective if it were pulled or not.
+The cummulative loss is $$\tilde L_{a,t} = \sum_{i\leq t}\tilde l_{a,i}$$.
+
 The expected value of $$\tilde l_{a,t}$$ in round $$t$$ is equal to the actual loss of the arm $$l_{i,t}$$.
 
-(*Using $$P_{a,t}$$ for $$\mathbb{P}[a_t = a]$$.*)
+(*Let $$P_{a,t}$$ be $$\mathbb{P}[a_t = a]$$.*)
 
 $$\implies \mathbb{E}[ \tilde l_{a_0,t}] = \sum_{a\in[K]} P_{a,t} \times \frac{l_{a,t}\cdot \mathbb{I}\{a=a_0\}}{P_{a,t}} = l_{a_0,t}$$ and $$\mathbb E[\tilde l_{a,t}^2] = \frac{l_{a,t}^2}{p_{a,t}}$$
 
@@ -300,7 +304,9 @@ $$\log(\frac{W_T}{W_0}) = \log(\frac{\sum_a e^{-\eta \tilde L_{a,T}}}{K}) \geq -
 
 and for any one round $$t$$, we can lower bound $$\frac {W_t}{W_{t-1}}$$ by the loss incurred in that round by:
 
-$$\log(\frac{W_t}{W_{t-1}}) = \log{( \sum_a \frac{w_{a,t}}{W_{t-1}}\cdot e^{-\eta\tilde l_{a,t}}  )}=\log{( \sum_a p_{a,t}\cdot e^{-\eta\tilde l_{a,t}}  )} \leq \log{( \sum_a p_{a,t}\cdot (1-\eta\tilde l_{a,t}+\frac{\eta^2}{2}\tilde l_{a,t}^2)  )}\leq \sum_a p_{a,t}(-\eta\tilde l_{a,t}+\frac{\eta^2}{2}\tilde l_{a,t}^2)$$
+$$\log(\frac{W_t}{W_{t-1}}) = \log{( \sum_a \frac{w_{a,t}}{W_{t-1}}\cdot e^{-\eta\tilde l_{a,t}}  )}=\log{( \sum_a p_{a,t}\cdot e^{-\eta\tilde l_{a,t}}  )}$$ 
+
+$$\leq \log{( \sum_a p_{a,t}\cdot (1-\eta\tilde l_{a,t}+\frac{\eta^2}{2}\tilde l_{a,t}^2)  )}\leq \sum_a p_{a,t}(-\eta\tilde l_{a,t}+\frac{\eta^2}{2}\tilde l_{a,t}^2)$$
 
 This is using: $$e^x \leq 1+x+\frac{x^2}{2}\forall x \leq 0\text{ and }e^x \geq 1+x$$
 
@@ -308,9 +314,13 @@ By using bound 1 along with repeated application of bound 2 for all $$t$$.
 
 We get that  $$\forall a: -log K - \eta \tilde L_{a,T} \leq \sum_{t\in[T]}\sum_b p_{b,t}(-\eta\tilde l_{b,t}+\frac{\eta^2}{2}\tilde l_{b,t}^2)$$
 
-rearranging the term in the equation, we get: $$\sum_{t\in[T]}\sum_{b\in[K]}p_{b,t}\tilde l_{b,t} - \sum_t \tilde l_{a,t} \leq \frac{\log K}{\eta} + \frac{\eta}{2}\sum_{t\in[T]}\sum_{b\in[K]}p_{b,t}\tilde l_{b,t}^2\text{  } \forall a$$
+rearranging the term in the equation, we get:
 
-Now, using the expected value, $$\mathbb E[\sum_{t\in[T]}\sum_{b\in[K]}p_{b,t}\tilde l_{b,t} - \sum_t \tilde l_{a,t}] = \mathbb E[\sum_t l_{a_t,t} - \sum_t l_{a,t}]$$ and definition of regret $$R = max_a\mathbb E[\sum l_{a_t,t} - \sum l_{a,t}]$$
+$$\sum_{t\in[T]}\sum_{b\in[K]}p_{b,t}\tilde l_{b,t} - \sum_t \tilde l_{a,t} \leq \frac{\log K}{\eta} + \frac{\eta}{2}\sum_{t\in[T]}\sum_{b\in[K]}p_{b,t}\tilde l_{b,t}^2\text{  } \forall a$$
+
+Now, using the expected value, 
+
+$$\mathbb E[\sum_{t\in[T]}\sum_{b\in[K]}p_{b,t}\tilde l_{b,t} - \sum_t \tilde l_{a,t}] = \mathbb E[\sum_t l_{a_t,t} - \sum_t l_{a,t}]$$ and definition of regret $$R = max_a\mathbb E[\sum l_{a_t,t} - \sum l_{a,t}]$$
 
 we get the following bound on the regret. 
 
@@ -342,13 +352,16 @@ class EXP3:
 For a better understanding and complete proofs of the above algorithms, we refer to these three surveys:
 
 **Bandits, Multi-Armed**. (n.d.). *Introduction to Multi-Armed Bandits*.
+
 **Bubeck, Sébastien, & Cesa-Bianchi, Nicolo**. (2012). *Regret analysis of stochastic and nonstochastic multi-armed bandit problems*. *Foundations and Trends® in Machine Learning*, 5(1), 1--122. Now Publishers, Inc.
+
 **Lattimore, Tor, & Szepesvári, Csaba**. (2020). *Bandit algorithms*. Cambridge University Press.
 
 
 ### Stochastic Bandits with Adversarial Corruption:
-Both Stochastic and adversarial bandits swing too far with their assumptions on the reward scenarios. Here we want to discuss the work of Lykouris, Mirrokni, and Paes Leme (2018)[^3]
-[^3]: {Lykouris, Thodoris, Mirrokni, Vahab, & Paes Leme, Renato. (2018). *Stochastic bandits robust to adversarial corruptions*. In *Proceedings of the 50th Annual ACM SIGACT Symposium on Theory of Computing* (pp. 114–122).}
+Both Stochastic and adversarial bandits swing too far with their assumptions on the reward scenarios. Here we want to discuss the work of Lykouris, Mirrokni, and Paes Leme (2018)
+
+{Lykouris, Thodoris, Mirrokni, Vahab, & Paes Leme, Renato. (2018). *Stochastic bandits robust to adversarial corruptions*. In *Proceedings of the 50th Annual ACM SIGACT Symposium on Theory of Computing* (pp. 114–122).}
 
 Another approach to the reward assumption can be in a middle ground, in this model we assume that rewards are initially drawn from a fixed distribution, but are adulterated with a finite amount of corruption by an adaptive adversary. 
 
@@ -462,12 +475,12 @@ The results are:
 
 |algorithm | Expected reward of optimal arm | Average reward in each round | average Regret in each round|
 |---|---|---|---|
-|Explore_then_commit|1|0.82844|0.17156|
-|EGreedy|1|0.83584|0.16416|
-|Successive_elimination|1|0.99825|0.00175|
-|UCB1|1|0.99574|0.00426|
-|EXP3|1|0.88704|0.11296|
-|MultiLayer_active_arm_elimination|1|0.94698|0.05302|
+|Explore_then_commit|1.0|0.82844|0.17156|
+|EGreedy|1.0|0.83584|0.16416|
+|Successive_elimination|1.0|0.99825|0.00175|
+|UCB1|1.0|0.99574|0.00426|
+|EXP3|1.0|0.88704|0.11296|
+|MultiLayer_active_arm_elimination|1.0|0.94698|0.05302|
 
 
 #### Stochastic Bandits with switched mean:
