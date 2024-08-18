@@ -142,7 +142,7 @@ Proof Sketch: For any round $$t$$, we can expect that with a high probability th
 
 Hence regret in round $$t$$ in expectation would be bounded by 
 
-$$R_t \leq \epsilon_t \cdot \max [\Delta_a] \big + \Delta_{a_t}$$
+$$R_t \leq \Delta_{a_t} + \epsilon_t \cdot \max [\Delta_a] $$
 
 Since $$a_t$$ has highest empirical reward, we can use the clean event condition and argue that 
 
