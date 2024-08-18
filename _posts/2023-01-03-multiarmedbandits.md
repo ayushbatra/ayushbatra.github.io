@@ -64,7 +64,7 @@ From [Hoeffding's inequality](https://en.wikipedia.org/wiki/Hoeffding%27s_inequa
 Let $$\mu_a$$ be true mean of arm $$a$$ and $$\overline{\mu}_{a,t}$$ be the mean estimated by sampling untill round $$t$$. 
 Then, by [Hoeffding's inequality](https://en.wikipedia.org/wiki/Hoeffding%27s_inequality)
 
-$$\implies\mathbb{P}\big[ | \mu_a - \overline{\mu}_{a,t} | > \delta_{a,t} \big] \leq  2e^{\frac{-2n_a(t)\cdot\delta_{a,t}^2}{(6 - (-5 ))^2}} = 2e^{\frac{-2n_a(t)\cdot\delta_{a,t}^2}{121}}$$
+$$\implies\mathbb{P}\big[ \lvert \mu_a - \overline{\mu}_{a,t} \rvert > \delta_{a,t} \big] \leq  2e^{\frac{-2n_a(t)\cdot\delta_{a,t}^2}{(6 - (-5 ))^2}} = 2e^{\frac{-2n_a(t)\cdot\delta_{a,t}^2}{121}}$$
 
 Let $$\delta_{a,t} = \sqrt{\frac{2\cdot 121\cdot log(T)}{n_a(t)}} \implies \mathbb{P}\big[ | \mu_a - \overline{\mu}_{a,t} | > \delta_{a,t} \big] \leq\frac{2}{T^4}$$
 
