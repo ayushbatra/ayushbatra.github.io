@@ -13,6 +13,12 @@ Alex one day wakes to find a magic coin with the following instructions:
 * If the coin lands on 'Heads' you will be given 10 million. 
 * If the coin lands on 'Tails' you will be given nothing.
 
+
+
+
+
+
+
   
 
 ![Rules](/assets/story.png "Rules")
