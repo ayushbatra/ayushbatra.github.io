@@ -612,12 +612,16 @@ The results are:
 
 ### Expected Regret vs Psuedo Regret:
 Throughout this article, we used the algorithm objective to minimize pseudo-regret. Another similar objective could be to minimize expected regret.
+
 Expected regret $$\mathbb E [R] = \mathbb E \big [\max_a\sum_tX_{a,t} - \sum_t X_{a_t,t}\big]$$.
+
 Whereas our psedo regret is $$\overline R = \max_a \mathbb E\big[ \sum_t X_{a,t}  - \sum_{t}X_{a_t,t}\big]$$.
+
 Since pseudo regret is the expected deficit from optimal action whereas expected regret is the expectation of regret with the action that is optimal.
 The expected regret is a stronger notion and $$\overline R \leq \mathbb E [R]$$.
 Here is a simulation to highlight that Expected regret is $$\geq$$ pseudo-regret.
 it shows that for normal rewards with mean $$= [1 , 0.5, 0.99 , 0.9 , 0.2  , 0.1 , 0]$$
+
 $$E[\max_a \sum_t X_{a,t}] \geq \max_a\mathbb E[\sum_t X_{a,t}]$$
 
 ```python
