@@ -70,7 +70,7 @@ Let $$\delta_{a,t} = \sqrt{\frac{2\cdot 121\cdot log(T)}{n_a(t)}}$$
 
 $$\implies \mathbb{P}\big[ \lvert \mu_a - \overline{\mu}_{a,t} \rvert > \delta_{a,t} \big] \leq\frac{2}{T^4}$$
 
-By Union Bound, $$\mathbb{P}\big[ \cup_{\forall a \in [K],t\in [T]} |\mu_a - \overline{\mu}_{a,t} | > \delta_{a,t}\big] \leq \sum_{t\in[T]}\sum_{a\in[K]} \frac{2}{T^4} \lt \frac{2}{T^4}$$
+By Union Bound, $$\mathbb{P}\big[ \cup_{\forall a \in [K],t\in [T]} \lvert\mu_a - \overline{\mu}_{a,t} \rvert > \delta_{a,t}\big] \leq \sum_{t\in[T]}\sum_{a\in[K]} \frac{2}{T^4} \lt \frac{2}{T^4}$$
 
 <p style="font-size: small; font-style: italic;">For this particular proof we don't need such a strict condition on the difference between empirical and true mean, this proof only requires that the empirical mean is close to the true mean for $$t = NK$$ and not all $$t\in[T]$$. But this extra condition will be helpful for further proofs.</p>
 
@@ -186,11 +186,11 @@ The algorithm protocol is as follows: initially, all arms are active. If the upp
 This algorithm achives $$O(\sqrt{KT\log T})$$ regret bound.
 Proof Sketch: For any arm $$a_0$$, that was last pulled at time $$t_0$$, then 
 
-$$|\mu_{a*} - \mu_{a_0} | \leq \delta_{a_0,t}+\delta{a* ,t} \leq \sqrt{\frac{2\cdot121\cdot\log T}{n_{t_0}(a_0)}}+\sqrt{\frac{2\cdot121\cdot\log T}{n_{t_0}(a*)}}$$
+$$\lvert\mu_{a*} - \mu_{a_0} \rvert \leq \delta_{a_0,t}+\delta{a* ,t} \leq \sqrt{\frac{2\cdot121\cdot\log T}{n_{t_0}(a_0)}}+\sqrt{\frac{2\cdot121\cdot\log T}{n_{t_0}(a*)}}$$
 
 Now, $$n_{t_0}(a*) \approx n_{t_0}(a_0) = n_{T}(a_0)$$.
 
-Hence, $$|\mu_{a*} - \mu_{a_0} | \leq O(\sqrt{\frac{\log T}{n_{T}(a_0)}})$$.
+Hence, $$\lvert\mu_{a*} - \mu_{a_0} \rvert \leq O(\sqrt{\frac{\log T}{n_{T}(a_0)}})$$.
 The total regret suffered from by pulling this arm multiple times is $$\leq O(\sqrt{\frac{\log T}{n_{T}(a_0)}})\times n_{T}(a_0)$$. On summing this quantity for all arms, the total regret for this algorithm can be bounded.
 
 $$\square$$
