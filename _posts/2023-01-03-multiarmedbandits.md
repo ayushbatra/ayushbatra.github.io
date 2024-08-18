@@ -59,28 +59,32 @@ Proof sketch:
 From [Hoeffding's inequality](https://en.wikipedia.org/wiki/Hoeffding%27s_inequality), we can infer that if $$N$$ is chosen large enough, then the mean reward for each arm estimated by sampling in the exploration phase is almost equal to the true mean reward of the arm. Then the total regret for exploration rounds is bounded by $$NK$$ times $$\max_{a\in[K]}\Delta_a$$, and the total regret in exploration rounds should be close to negligible.
 
 
-<p style="font-size: small; font-style: italic;"><a href = "https://en.wikipedia.org/wiki/Hoeffding%27s_inequality">Hoeffding's inequality</a> is a type of <a href = "https://en.wikipedia.org/wiki/Concentration_inequality">Concentration inequality</a>, such inequalities come in useful for proving bounds on various bandits algorithms.</p>
+<p style="font-size: small; font-style: italic;">(<a href = "https://en.wikipedia.org/wiki/Hoeffding%27s_inequality">Hoeffding's inequality</a> is a type of <a href = "https://en.wikipedia.org/wiki/Concentration_inequality">Concentration inequality</a>, such inequalities come in useful for proving bounds on various bandits algorithms.)</p>
 
 Let $$\mu_a$$ be true mean of arm $$a$$ and $$\overline{\mu}_{a,t}$$ be the mean estimated by sampling untill round $$t$$. 
 Then, by [Hoeffding's inequality](https://en.wikipedia.org/wiki/Hoeffding%27s_inequality)
 
 $$\implies\mathbb{P}\big[ \lvert \mu_a - \overline{\mu}_{a,t} \rvert > \delta_{a,t} \big] \leq  2e^{\frac{-2n_a(t)\cdot\delta_{a,t}^2}{(6 - (-5 ))^2}} = 2e^{\frac{-2n_a(t)\cdot\delta_{a,t}^2}{121}}$$
 
-Let $$\delta_{a,t} = \sqrt{\frac{2\cdot 121\cdot log(T)}{n_a(t)}} \implies \mathbb{P}\big[ \lvert \mu_a - \overline{\mu}_{a,t} \rvert > \delta_{a,t} \big] \leq\frac{2}{T^4}$$
+Let $$\delta_{a,t} = \sqrt{\frac{2\cdot 121\cdot log(T)}{n_a(t)}}$$
 
-By Union Bound, $$\mathbb{P}\big[ \cup_{\forall a \in [K],t\in [T]} |\mu_a - \overline{\mu}_{a,t} | > \delta_{a,t}\big] \leq \sum_{t\in[T]}\sum_{a\in[K]} \frac{2}{T^4} \lt \frac{2}{T^4}$$[^2]
-[^2]: For this particular proof we don't need such a strict condition on the difference between empirical and true mean, this proof only requires that the empirical mean is close to the true mean for $$t = NK$$ and not all $$t\in[T]$$. But this extra condition will be helpful for further proofs.
+$$\implies \mathbb{P}\big[ \lvert \mu_a - \overline{\mu}_{a,t} \rvert > \delta_{a,t} \big] \leq\frac{2}{T^4}$$
+
+By Union Bound, $$\mathbb{P}\big[ \cup_{\forall a \in [K],t\in [T]} |\mu_a - \overline{\mu}_{a,t} | > \delta_{a,t}\big] \leq \sum_{t\in[T]}\sum_{a\in[K]} \frac{2}{T^4} \lt \frac{2}{T^4}$$
+
+<p style="font-size: small; font-style: italic;">For this particular proof we don't need such a strict condition on the difference between empirical and true mean, this proof only requires that the empirical mean is close to the true mean for $$t = NK$$ and not all $$t\in[T]$$. But this extra condition will be helpful for further proofs.</p>
 
 
-Let the event that for all $$a\in[K]$$ and $$t\in[T]$$ , $$|\mu_a - \overline \mu_{a,t}| \leq \delta_{a,t}$$ be called clean event, and it occurs with probabilty $$\geq 1-O(\frac{1}{T^2})$$
+Let the event that for all $$a\in[K]$$ and $$t\in[T]$$ , $$\lvert\mu_a - \overline \mu_{a,t}\rvert \leq \delta_{a,t}$$ be called clean event, and it occurs with probabilty $$\geq 1-O(\frac{1}{T^2})$$
 
 The total regret suffered by the algorithm is the regret suffered in the exploration phase + the regret suffered in the exploitation phase. The regret in any 1 round of the exploration phase is bounded by the limits of rewards distribution *(6 - (-5))* and in the exploitation phase, with high probability *(clean event occurred)* is no more than $$\max_{a} 2\delta_{a,NK}$$ and with small probability *(clean even didn't happen)* is bounded by the limit of rewards distribution.
 
 $$\implies \mathbb{E}[R] \leq N\cdot K\cdot 11 + (1-O(\frac{1}{T^2}))\cdot\max_{a} 2\delta_{a,NK} + O(\frac{1}{T^2})\cdot 11$$
 
- to minimize the above equation we can assume $$N$$ to be $$O\big((\frac{T^2\log T}{K^2})^\frac{1}{3}\big)$$ and  $$\delta_{a,NK}/$$ for any arm is $$O\big(\sqrt{ \frac{2\cdot121\cdot\log(T)}{N} }\big)$$
+ to minimize the above equation we can assume $$N$$ to be $$O\big((\frac{T^2\log T}{K^2})^\frac{1}{3}\big)$$ and $$\delta_{a,NK}$$ for any arm is $$O\big(\sqrt{ \frac{2\cdot121\cdot\log(T)}{N} }\big)$$
 
 $$\implies \mathbb{E}[R] = O\big( T^{\frac{2}{3}}K^\frac{1}{3}(\log T)^\frac{1}{3} \big)$$
+
 $$\square$$
 
 A Python code implementation of the above algorithm looks like:
@@ -118,8 +122,13 @@ Here,
 *Here the algorithm is deterministic so this function seems pointless but its utility will get clear in some time*
 + next_action returns the next action
 + The update function is to update any internal state after observing the reward for the chosen action.
+&nbsp;
+&nbsp;
+&nbsp;
 
-##### $$\epsilon$$-Greedy:
+#### $$\epsilon$$-Greedy:
+
+
 Another algorithm that achieves the same expected regret is the $$\epsilon$$-Greedy algorithm.
 In each round, the algorithm chooses the arm with the highest empirical award with probability $$1-\epsilon_t$$, and with probability $$\epsilon_t$$ it chooses a random arm. With  $$\epsilon_t = O((\frac{K\log(t)}{t})^\frac{1}{3})$$ 
 
@@ -133,11 +142,12 @@ Hence regret in round $$t$$ in expectation would be bounded by
 
 $$R_t \leq \epsilon_t \max \Delta_a + \Delta_{a_t}$$
 
-Since $$a_t$$ has highest empirical reward, we can use the clean event condition and argue that $$|\mu_{a*} - \mu_{a_t}| \le \delta_{a_t} + \delta_{a*} \leq \sqrt{\frac{2\cdot121\log t}{n_t(a*)}}+\sqrt{\frac{2\cdot121\log t}{n_t(a_t)}}$$
+Since $$a_t$$ has highest empirical reward, we can use the clean event condition and argue that $$\lvert\mu_{a*} - \mu_{a_t}\rvert \le \delta_{a_t} + \delta_{a*} \leq \sqrt{\frac{2\cdot121\log t}{n_t(a*)}}+\sqrt{\frac{2\cdot121\log t}{n_t(a_t)}}$$
 
 $$\implies \mathbb{E}[R_t] \leq \epsilon_t\max_a \Delta_a + 2\sqrt{\frac{2\cdot2\cdot121\cdot k\log t}{\epsilon_t k}}$$
 
 Substituting the value of $$\epsilon_t$$ that minimizes the expression on RHS and then summing this value for all $$t\in [T]$$ gives the expected regret bound.
+
 $$\square$$
 
 A Python code implementation of the above algorithm looks like: 
@@ -160,8 +170,13 @@ class EGreedy:
 	def update(self, chosen_action, reward, history , reward_dict, T):
 		pass
 ```
+&nbsp;
+&nbsp;
+&nbsp;
 
-##### Successive_Elimination:
+#### Successive_Elimination:
+
+
 One drawback with the previous two algorithms is that the exploration phase is completely oblivious to the rewards observed. If certain arms have already shown that they have very bad rewards compared to others, there is no need to keep trying them out.
 Based on this idea here is an algorithm that achieves better regret guarantees.
 
@@ -203,7 +218,7 @@ class Successive_elimination:
 		return
 ```
 
-##### UCB1:
+#### UCB1:
 Let us consider another approach with adaptive exploration. 
 Assume that every arm is as good as it can possibly be and choose the arm with the highest upper limit on mean reward in each round.
 The two summands in the estimation of the choice arm, $$\overline\mu+ \delta$$ strike a balance between exploration and exploitation, the former increases for good arms and the latter for less explored arms.
@@ -229,7 +244,7 @@ class UCB1:
 	def update(self, chosen_action, reward, history , reward_dict, T):
 		return
 ```
-#### Adversarial Bandits:
+### Adversarial Bandits:
 
 Stochastic Bandits take a very strong assumption on the rewards of the actions. This strong assumption might limit the application and guarantees of the above algorithms where the i.i.d. assumption is violated. Adversarial bandits swing on the other side and take no assumption on the reward of each arm. 
 
@@ -243,7 +258,7 @@ Even in this pessimistic scenario, we can guarantee some upper bounds on the reg
 In adversarial bandits, pseudo-regret is defined as the deficit suffered from the best arm policy. 
 $$E[R] = \max_{a\in[K]}\mathbb{E}\big[ \sum_{t\in[T]}X_{a,t} - \sum_{t\in[T]}X_{a_t,t} \big]$$ 
 
-##### EXP3:
+#### EXP3:
 Let's define the loss of any reward as the difference between the maximum possible reward and the observed reward, scaled between 0 to 1, for our scenario, our rewards are bounded between -5 and 6, so our $$loss = \frac{-1}{11}\cdot(reward-6)$$ 
 
 The key idea in the exp3 algorithm is it tries to keep a record of cumulative loss for each arm. Since in any round reward/loss of only one action is observed keeping the exact record is not possible. The idea is to scale the loss with the inverse of the probability of observing it. 
@@ -330,7 +345,7 @@ For a better understanding and complete proofs of the above algorithms, we refer
 **Lattimore, Tor, & Szepesvári, Csaba**. (2020). *Bandit algorithms*. Cambridge University Press.
 
 
-#### Stochastic Bandits with Adversarial Corruption:
+### Stochastic Bandits with Adversarial Corruption:
 Both Stochastic and adversarial bandits swing too far with their assumptions on the reward scenarios. Here we want to discuss the work of Lykouris, Mirrokni, and Paes Leme (2018)[^3]
 [^3]: {Lykouris, Thodoris, Mirrokni, Vahab, & Paes Leme, Renato. (2018). *Stochastic bandits robust to adversarial corruptions*. In *Proceedings of the 50th Annual ACM SIGACT Symposium on Theory of Computing* (pp. 114–122).}
 
@@ -343,7 +358,7 @@ Another approach to the reward assumption can be in a middle ground, in this mod
 
 By varying the total corruption this model generalizes both stochastic and adversarial bandits.
 
-##### Multi-layer Active Arm Elimination Race:
+#### Multi-layer Active Arm Elimination Race:
 This algorithm extends successive elimination. In successive elimination, we kept a record of all active arms and eliminated arms, under the assumption of clean event if they could not be the best arms. The idea is similar, but instead of keeping a single such list, the algorithm maintains multiple such lists, let's call them layers(assume $$n$$ layers). In each round, it selects a layer with probability $$\propto_{\approx} 2^{-n}$$. The layer n updates its dictionaries of the number of arm pulls and empirical means, only when the layer is selected. The result of each subsequent layer is more robust to the corruption since they are likely to only admit about $$2^{-n}$$ times the corruption, in their dictionaries. Whenever a layer $$n$$ concludes that an arm $$a$$ needs to be eliminated from all its previous layers, also remove that arm. In case a layer is selected but has no active arms, it selects the arm based on the next smallest layer that is not empty.
 
 A Python code implementation of the above algorithm looks like:
@@ -412,7 +427,7 @@ class MultiLayer_active_arm_elimination:
 
 Now that we have introduced all the algorithms, let's see how they practically fare, by running some simulations.
 
-##### Stochastic Bandits:
+#### Stochastic Bandits:
 Consider the case of when the rewards follow i.i.d. assumption at each time step.
 The simulation code is as follows:
 ```python
@@ -454,7 +469,7 @@ The results are:
 |MultiLayer_active_arm_elimination|1|0.94698|0.05302|
 
 
-##### Stochastic Bandits with switched mean:
+#### Stochastic Bandits with switched mean:
 Let's simulate another scenario in which the mean rewards are switched after T/2 rounds.
 
 The simulation code is as follows:
@@ -492,7 +507,7 @@ The results are:
 |EXP3|1.0|0.50991|0.49009|
 |MultiLayer_active_arm_elimination|1.0|0.45982|0.54018|
 
-##### Adaptive Adversarial bandits:
+#### Adaptive Adversarial bandits:
 Let's simulate the case where the adversary for the first T/10 rounds, simulates stochastic bandits, and then sets the reward for each arm either 0 or 1, depending if the probability of it getting pulled is greater or less than $$1/K$$.
 The simulation code is as follows:
 ```python
@@ -536,7 +551,7 @@ The results are:
 |EXP3|0.53629|0.51533|0.02097|
 |MultiLayer_active_arm_elimination|0.65429|0.12936|0.52493|
 
-##### Stochastic bandits with finite corruption:
+#### Stochastic bandits with finite corruption:
 Let's simulate the case, where the rewards are drawn from an i.i.d. assumption, but an adversary can inject a finite amount of adversarial noise in order to increase the regret of the algorithm.
 There can be many strategies for the adversary, but we are using a strategy that whenever the algorithm has greater than $$1/K$$ probability of choosing the best arm, it reduces its reward by 5 and increases the reward of all other arms by 5.
 The simulation code is as follows:
