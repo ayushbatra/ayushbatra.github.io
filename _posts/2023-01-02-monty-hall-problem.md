@@ -68,11 +68,11 @@ def monty_hall_sim():
 	host_choice = random.choice(list(filter(lambda x:x!=contestant_choice and x!= prize, doors)))
 	#This is to satisfy the conditional statement given to us.
  	# since we know that when the host choice was revealed it was not the prize doors
-	if (  host_choice == prize ):
+	if (host_choice == prize):
 		# Abort the simulation
 		return [0,0]
 	#Returing the output, the first index is if the initial guess was correct, and the second index is if this is a valid iteration. 
-	if 	contestant_choice != prize:
+	if contestant_choice != prize:
 		return [1 , 1]
 	else:
 		return [0 , 1]	
