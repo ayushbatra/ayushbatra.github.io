@@ -296,7 +296,7 @@ The cummulative loss is $$\tilde L_{a,t} = \sum_{i\leq t}\tilde l_{a,i}$$.
 
 The expected value of $$\tilde l_{a,t}$$ in round $$t$$ is equal to the actual loss of the arm $$l_{a,t}$$.
 
-(*Let $$P_{a,t}$$ be $$\mathbb{P}[a_t = a]$$.*)
+Let $$P_{a,t}$$ be $$\mathbb{P}[a_t = a]$$.
 
 $$\implies \mathbb{E}[ \tilde l_{a_0,t}] = \sum_{a\in[K]} P_{a,t} \times \frac{l_{a,t}\cdot \mathbb{I}\{a=a_0\}}{P_{a,t}} = l_{a_0,t}$$ and $$\mathbb E[\tilde l_{a,t}^2] = \frac{l_{a,t}^2}{p_{a,t}}$$
 
