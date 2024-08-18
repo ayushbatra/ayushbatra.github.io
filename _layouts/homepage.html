@@ -1,17 +1,25 @@
 ---
 layout: default
 ---
-<!-- <article> -->
+<article>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
         .container {
-/*             display: flex; */
-/*             align-items: center; */
-/*             max-width: 900px; */
-/*             margin: 0 auto; */
-/*             background-color: #fff; */
-/*             border-radius: 8px; */
-/*             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); */
-/*             padding: 20px; */
+            display: flex;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px; /* Increased max-width for more space */
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            box-sizing: border-box; /* Ensures padding is included in width */
         }
         .photo-container {
             text-align: center;
@@ -29,17 +37,17 @@ layout: default
             margin-top: 10px;
         }
         .about-me {
-            max-width: 700px;
+            flex: 1; /* Allows the text to take up remaining space */
         }
     </style>
     <div class="container">
         <div class="photo-container">
-            <img src="assets/1_low_cloaked.png" alt="Your Photo" class="photo">
+            <img src="assets/1_low_cloaked.png" alt="Profile photo of Ayush Batra" class="photo">
             <div class="caption">Ayush Batra</div>
         </div>
         <div class="about-me">
             <h2>About Me</h2>
-            <p>Hello! I am a BTech graduate from IIT Delhi, currently working as a Software Engineer at Oracle. With a robust foundation in Computer Science, I have a keen interest in theoretical computer science, algorithm design, information theory and machine learning. I am passionate about exploring new technologies and advancing my understanding of the field.</p>
+            <p>Hello! I am a BTech graduate from IIT Delhi, currently working as a Software Engineer at Oracle. With a robust foundation in Computer Science, I have a keen interest in theoretical computer science, algorithm design, information theory, and machine learning. I am passionate about exploring new technologies and advancing my understanding of the field.iteraion trytufjghtgfv</p>
         </div>
     </div>
-<!-- </article> -->
+</article>
