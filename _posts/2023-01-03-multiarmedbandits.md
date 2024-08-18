@@ -56,8 +56,10 @@ This simple-looking algorithm suffers from sub-linear i.e. o(T) regret.
 
 Proof sketch: 
 
-From [Hoeffding's inequality](https://en.wikipedia.org/wiki/Hoeffding%27s_inequality)[^1], we can infer that if $$N$$ is chosen large enough, then the mean reward for each arm estimated by sampling in the exploration phase is almost equal to the true mean reward of the arm. Then the total regret for exploration rounds is bounded by $$NK$$ times $$\max_{a\in[K]}\Delta_a$$, and the total regret in exploration rounds should be close to negligible.
-[^1]: *[Hoeffding's inequality](https://en.wikipedia.org/wiki/Hoeffding%27s_inequality) is a type of [Concentration inequality](https://en.wikipedia.org/wiki/Concentration_inequality), such inequalities come in useful for proving bounds on various bandits algorithms.*
+From [Hoeffding's inequality](https://en.wikipedia.org/wiki/Hoeffding%27s_inequality), we can infer that if $$N$$ is chosen large enough, then the mean reward for each arm estimated by sampling in the exploration phase is almost equal to the true mean reward of the arm. Then the total regret for exploration rounds is bounded by $$NK$$ times $$\max_{a\in[K]}\Delta_a$$, and the total regret in exploration rounds should be close to negligible.
+
+
+<p style="font-size: small; font-style: italic;">T[Hoeffding's inequality](https://en.wikipedia.org/wiki/Hoeffding%27s_inequality) is a type of [Concentration inequality](https://en.wikipedia.org/wiki/Concentration_inequality), such inequalities come in useful for proving bounds on various bandits algorithms.</p>
 
 Let $$\mu_a$$ be true mean of arm $$a$$ and $$\overline{\mu}_{a,t}$$ be the mean estimated by sampling untill round $$t$$. 
 Then, by [Hoeffding's inequality](https://en.wikipedia.org/wiki/Hoeffding%27s_inequality)
