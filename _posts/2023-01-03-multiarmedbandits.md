@@ -577,18 +577,6 @@ The results are:
 |MultiLayer_active_arm_elimination|0.97867|0.90995|0.06872|
 
 
-Let's run this again but with a 5000 corruption limit.
-The results are:
-
-|algorithm | Expected reward of optimal arm | Average reward in each round | average Regret in each round|
-|---|---|---|---|
-|Explore_then_commit|0.78748|-0.14557|0.93305|
-|EGreedy|0.91015|0.29252|0.61763|
-|Successive_elimination|1.0133|0.29311|0.72019|
-|UCB1|0.99455|0.29764|0.69691|
-|EXP3|0.68337|0.62596|0.05741|
-|MultiLayer_active_arm_elimination|0.6608|0.01886|0.64194|
-
 ### Expected Regret vs Psuedo Regret:
 Throughout this article, we used the algorithm objective to minimize pseudo-regret. Another similar objective could be to minimize expected regret.
 
