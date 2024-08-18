@@ -6,20 +6,19 @@ mathjax: true
 ---
 
 
-The Monty Hall Problem is a well-known puzzle in probability that may seem straightforward at first but is surprisingly tricky and confusing. This article will delve into the problem by examining how the host's choice of door affects the game, to better understand the problem.
+The Monty Hall Problem is a classic puzzle in probability theory that may seem straightforward at first but is surprisingly tricky and confusing. This article will delve into the problem by examining how the host's choice of door affects the game, to better understand the problem.
 
 
 
-Let's consider, you are on a game show and the following happens:
+###The Problem
+You are on a game show with 3 doors labeled $$\{A, B, C\}$$. Behind one door is a prize, and behind the other two doors are empty. Here’s how the game works:
 
-1. You are presented with 3 doors(Let $$\{A, B, C\}$$ ) in front of you and told that exactly one of them hides a prize and the other two are empty your task is to select a door.
-2. After you have made your selection, the host of the show selects a different door.
+1. You choose one of the doors.
+2. The host selects a different door.
 3. The host's door is opened and it is revealed that that door does not hide the prize.
 4. You are offered to reconsider your option, you can select the other unopened door or you can stick with your current door.
 
-
-What should you do? which door has a higher chance of containing the prize.
-
+What should you do to maximize your chances of winning?
 
 The above problem is a slightly perturbed version of the MHP, in the Monty Hall problem, you are given a crucial piece of information about step 2 i.e. how the host chooses his door. In MHP you are told that the host is aware of the price door and deliberately chooses the other door without the prize.
 
@@ -29,7 +28,10 @@ Let's run a simulation, for the Monty Hall and the Not-Monty Hall problem to see
 
 For the not-monty hall problem:
 {% highlight python %}
-
+import random
+import numpy as np
+{% endhighlight %}
+{% highlight python %}
 def not_monty_hall_sim():
 	doors = ['a','b','c']
 	#Let the prize be randomly chosen
