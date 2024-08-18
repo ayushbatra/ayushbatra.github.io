@@ -512,12 +512,11 @@ The results are:
 |UCB1|1.0|0.99574|0.00426|
 |EXP3|1.0|0.88704|0.11296|
 |MultiLayer_active_arm_elimination|1.0|0.94698|0.05302|
+
+
 &nbsp;
 &nbsp;
 &nbsp;
-
-
-
 #### Stochastic Bandits with switched mean:
 Let's simulate another scenario in which the mean rewards are switched after T/2 rounds.
 
@@ -555,11 +554,11 @@ The results are:
 |UCB1|1.0|0.99367|0.00633|
 |EXP3|1.0|0.50991|0.49009|
 |MultiLayer_active_arm_elimination|1.0|0.45982|0.54018|
-&nbsp;
-&nbsp;
-&nbsp;
 
 
+&nbsp;
+&nbsp;
+&nbsp;
 #### Adaptive Adversarial bandits:
 Let's simulate the case where the adversary for the first T/10 rounds, simulates stochastic bandits, and then sets the reward for each arm either 0 or 1, depending if the probability of it getting pulled is greater or less than $$1/K$$.
 The simulation code is as follows:
@@ -603,11 +602,12 @@ The results are:
 |UCB1|0.89915|0.09995|0.7992|
 |EXP3|0.53629|0.51533|0.02097|
 |MultiLayer_active_arm_elimination|0.65429|0.12936|0.52493|
-&nbsp;
-&nbsp;
-&nbsp;
 
 
+
+&nbsp;
+&nbsp;
+&nbsp;
 #### Stochastic bandits with finite corruption:
 Let's simulate the case, where the rewards are drawn from an i.i.d. assumption, but an adversary can inject a finite amount of adversarial noise in order to increase the regret of the algorithm.
 There can be many strategies for the adversary, but we are using a strategy that whenever the algorithm has greater than $$1/K$$ probability of choosing the best arm, it reduces its reward by 5 and increases the reward of all other arms by 5.
@@ -658,12 +658,12 @@ The results are:
 |UCB1|1.00494|0.2935|0.71144|
 |EXP3|0.98156|0.90013|0.08142|
 |MultiLayer_active_arm_elimination|0.97867|0.90995|0.06872|
-&nbsp;
-&nbsp;
-&nbsp;
 
 
 
+&nbsp;
+&nbsp;
+&nbsp;
 ### Expected Regret vs Psuedo Regret:
 Throughout this article, we used the algorithm objective to minimize pseudo-regret. Another similar objective could be to minimize expected regret.
 
