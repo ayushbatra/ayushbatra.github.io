@@ -85,7 +85,7 @@ $$\implies \mathbb{E}[R] \leq N\cdot K\cdot 11 + (1-O(\frac{1}{T^2}))\cdot\max_{
 
 $$\implies \mathbb{E}[R] = O\big( T^{\frac{2}{3}}K^\frac{1}{3}(\log T)^\frac{1}{3} \big)$$
 
-<p style="text-align: right;">&amp;#9633;</p>
+<p style="text-align: right;">&#9633;</p>
 
 
 A Python code implementation of the above algorithm looks like:
