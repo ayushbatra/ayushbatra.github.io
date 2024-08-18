@@ -1,13 +1,10 @@
 title: "Ayush Batra"
 author: ""
-description: "."
+description: ""
 permalink: /:title/
 lang: "en"
 excerpt_separator: "\n\n\n"
 date_format: "%B %d, %Y"
-
-
-markdown: kramdown
 
 
 # Layout
