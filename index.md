@@ -16,7 +16,7 @@ layout: "page"
 }
 </style>
 
-<img src="/assets/1_low_clocked.png" alt="Circular Image" class="circle-img">
+<img src="/assets/1_low_cloacked.png" alt="Circular Image" class="circle-img">
 
 
 Hi! Namaste! Sasrikal! Hola! Vanakkam!
