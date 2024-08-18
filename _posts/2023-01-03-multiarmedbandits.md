@@ -312,33 +312,12 @@ class EXP3:
 		return
 ```
 
-For a better understanding and complete proofs of the above algorithms, we refer to these three surveys: 
-```bibtex
-@article{banditsintroduction,
-  title={Introduction to Multi-Armed Bandits},
-  author={Bandits, Multi-Armed}
-}
-```
-```bibtex
-@article{bubeck2012regret,
-  title={Regret analysis of stochastic and nonstochastic multi-armed bandit problems},
-  author={Bubeck, S{\'e}bastien and Cesa-Bianchi, Nicolo and others},
-  journal={Foundations and Trends{\textregistered} in Machine Learning},
-  volume={5},
-  number={1},
-  pages={1--122},
-  year={2012},
-  publisher={Now Publishers, Inc.}
-}
-```
-```bibtex
-@book{lattimore2020bandit,
-  title={Bandit algorithms},
-  author={Lattimore, Tor and Szepesv{\'a}ri, Csaba},
-  year={2020},
-  publisher={Cambridge University Press}
-}
-```
+For a better understanding and complete proofs of the above algorithms, we refer to these three surveys:
+
+**Bandits, Multi-Armed**. (n.d.). *Introduction to Multi-Armed Bandits*.
+**Bubeck, Sébastien, & Cesa-Bianchi, Nicolo**. (2012). *Regret analysis of stochastic and nonstochastic multi-armed bandit problems*. *Foundations and Trends® in Machine Learning*, 5(1), 1--122. Now Publishers, Inc.
+**Lattimore, Tor, & Szepesvári, Csaba**. (2020). *Bandit algorithms*. Cambridge University Press.
+
 
 #### Stochastic Bandits with Adversarial Corruption:
 Both Stochastic and adversarial bandits swing too far with their assumptions on the reward scenarios. Here we want to discuss the work of Lykouris, Mirrokni, and Paes Leme (2018)[^3]
