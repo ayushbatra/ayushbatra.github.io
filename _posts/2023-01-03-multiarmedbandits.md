@@ -24,6 +24,9 @@ Notations used:
 + a*: be the optimal arm.
 + $$\mathbb{I}\{predicate\}$$: indicator function on predicate, it is $$1$$ if predicate is true 0 otherwise. 
 &nbsp;
+&nbsp;
+&nbsp;
+
 #### Stochastic Bandits:
 
 Stochastic bandits are a type of problem in which the rewards of different actions are unrelated to each other, and the rewards of the same action at different time steps are an i.i.d distribution. 
@@ -41,12 +44,18 @@ $$R = \max_{a\in [k]} \mathbb{E}\Big[\sum_{i\in[T]}X_{a,t} - \sum_{i\in[T]}X_{a_
 
 For this article, let's assume that all stochastic rewards are drawn from Normal Distribution with a mean between 0 and 1, 1 standard deviation, and capped between -5 and 6.
 
+&nbsp;
+&nbsp;
 
-##### Explore-then-commit:
+
+#### Explore-then-commit:
 
 Let's start with a simple algorithm: explore arms uniformly selecting each action $$N$$ times *(exploration phase)* and then committing to the best arm for the remaining $$T-NK$$ rounds *(exploitation phase)*.
+
 This simple-looking algorithm suffers from sub-linear i.e. o(T) regret.
+
 Proof sketch: 
+
 From [Hoeffding's inequality](https://en.wikipedia.org/wiki/Hoeffding%27s_inequality)[^1], we can infer that if $$N$$ is chosen large enough, then the mean reward for each arm estimated by sampling in the exploration phase is almost equal to the true mean reward of the arm. Then the total regret for exploration rounds is bounded by $$NK$$ times $$\max_{a\in[K]}\Delta_a$$, and the total regret in exploration rounds should be close to negligible.
 [^1]: *[Hoeffding's inequality](https://en.wikipedia.org/wiki/Hoeffding%27s_inequality) is a type of [Concentration inequality](https://en.wikipedia.org/wiki/Concentration_inequality), such inequalities come in useful for proving bounds on various bandits algorithms.*
 
