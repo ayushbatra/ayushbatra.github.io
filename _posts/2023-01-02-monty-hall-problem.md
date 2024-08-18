@@ -10,7 +10,7 @@ The Monty Hall Problem is a classic puzzle in probability theory that may seem s
 
 
 
-###The Problem
+### The Problem
 
 You are on a game show with 3 doors labeled $$\{A, B, C\}$$. Behind one door is a prize, and behind the other two doors are empty. Here’s how the game works:
 
