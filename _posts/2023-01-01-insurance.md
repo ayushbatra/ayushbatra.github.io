@@ -26,7 +26,7 @@ Alex one day wakes to find a magic coin with the following instructions:
 
 Now Alex is very happy at the prosprect of earning 10 million but is not ready to accept that this deal is not guaranteed and there is a 0.5 probability that he may not get anything. So instead he goes to Alpha Insurance company and offers them the following deal:
 <br />
-He will flip the magic coin and it lands on head he will share 6 million from his 10 million winnings but if the coin lands tails, the insurance company will have to pay him 4 million.
+He will flip the magic coin and if it lands on head he will share 6 million from his 10 million winnings but if the coin lands tails, the insurance company will have to pay him 4 million.
 <br />
 The company accepts the deal thinking this is a net positive for their profits and Alex walks out with 4 million irrespective of what sides the coin lands.
 <br /><br />
