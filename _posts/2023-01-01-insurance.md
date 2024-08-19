@@ -58,11 +58,11 @@ Why would Alex participate in this deal if he knows that he is losing money? It 
 
 <img src="/assets/Law_of_Dim_Mar_U.png" alt="Law of Diminishing Marginal Utility" width="700"/>
 
-This phenomenon is understood by the "Law of Diminishing Marginal Utility" which implies that the value of something gets lower if you have a large amount of this thing. In this case, Alex would prefer having more money as depicted by the increasing function of utility with money but this value increases less and less when he has larger and larger amounts of money.<br /> In other words the value that he expects to gain in his life by getting 4 million is more than the value he expects to lose in his life by losing 6 million. Thus he has a positive expected value in this deal and would choose to participate in this stochastic transaction with Alpha Insurance.
+This phenomenon is understood by the "Law of Diminishing Marginal Utility" which implies that the value of something gets lower if you have a large amount of this thing. In this case, Alex would prefer having more money as depicted by the increasing function of utility with money but this value increases less and less when he has larger and larger amounts of money.<br /> Thus, the value that he expects to gain in his life by getting 4 million is more than the value he expects to lose in his life by losing 6 million. Thus he has a positive expected value in this deal and would choose to participate in this stochastic transaction with Alpha Insurance.
 
 
 
 <br />
 <br />
 
-In slightly different words, an insurance service could be considered a courier service to send money from your more prosperous futures to your less prosperous futures.
+In other words, an insurance service could be considered a courier service to send money from your more prosperous futures to your less prosperous futures.
