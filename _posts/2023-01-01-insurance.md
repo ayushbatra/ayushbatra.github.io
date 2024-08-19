@@ -54,7 +54,7 @@ Since this deal is an expected positive money for Alpha Insurance, and the net a
 $$E[money] = \frac{1}{2}\cdot -1 * 6 Million + \frac{1}{2} \cdot 4 Million = -1 Million$$
 
 
-Why would Alex participate in this deal if he knows that he is losing money? It is because he is not trying to maximize expected amount of money, he is trying to maximize another attribute - let's call it utility - that expresses the value this money brings to his life. 
+Why would Alex participate in this deal if he knows that he is losing money? It is because he is not trying to maximize the expected amount of money, he is trying to maximize another attribute - let's call it utility - that expresses the value this money brings to his life. 
 
 <img src="/assets/Law_of_Dim_Mar_U.png" alt="Law of Diminishing Marginal Utility" width="700"/>
 
