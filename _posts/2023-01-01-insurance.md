@@ -39,7 +39,8 @@ Let's try to understand how Alpha Insurance or Alex would benefit from a deal li
 
 
 ### Alpha Insurance
-Alpha Insurance would participate in this deal because this is an expected positive for them a simple calculation would suggest
+Alpha Insurance would participate in this deal because this is an expected positive money for them.
+A simple calculation would suggest:
 
 $$E[money] = \frac{1}{2}\cdot 6 Million + \frac{1}{2}\cdot-1 * 4 Million = 1 Million$$
 
