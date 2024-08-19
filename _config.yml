@@ -25,7 +25,7 @@ external:                  # shows a footer with social links - for available ic
   - {title: Mail, icon: envelope, url: "mailto:ayushbatra2411@gmail.com"}
   - {title: Github, icon: github, url: "https://github.com/ayushbatra"}
   # - {title: Linkedin, icon: linkedin, url: "https://www.linkedin.com/in/ayush-batra-497a43192/"}
-  - {title: Linkedin, icon: rss, url: "https://www.linkedin.com/in/ayush-batra-497a43192/"}
+  - {title: Subscribe, icon: rss, url: "https://www.linkedin.com/in/ayush-batra-497a43192/"}
 
 comments:
 #  disqus_shortname: ""    # see https://disqus.com/
