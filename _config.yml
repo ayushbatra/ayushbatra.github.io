@@ -24,7 +24,7 @@ navigation:                # accepts {file, title, url, icon, sidebaricon}
 external:                  # shows a footer with social links - for available icons see fontawesome.com/icons
   - {title: Mail, icon: envelope, url: "mailto:ayushbatra2411@gmail.com"}
   - {title: Github, icon: github, url: "https://github.com/ayushbatra"}
-  - {title: Linkedin icon: linkedin, url: "https://www.linkedin.com/in/ayush-batra-497a43192/"}
+  - {title: Linkedin, icon: linkedin, url: "https://www.linkedin.com/in/ayush-batra-497a43192/"}
   # - {title: Subscribe, icon: rss, url: "/feed.xml"}
 
 comments:
