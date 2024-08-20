@@ -556,7 +556,7 @@ The results are:
 |Explore_then_commit|1.0|0.3263|0.6737|
 |EGreedy|1.0|0.45929|0.54071|
 |Successive_elimination|1.0|0.49763|0.50237|
-|UCB1|1.0|0.99367|0.00633|
+|UCB1|1.0|0.89242|0.10757|
 |EXP3|1.0|0.50991|0.49009|
 |MultiLayer_active_arm_elimination|1.0|0.45982|0.54018|
 
