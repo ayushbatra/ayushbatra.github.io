@@ -31,8 +31,9 @@ h1 {
 }
 
 .note-button {
-    padding: 15px 25px;
+    padding: 20px 30px;
     margin: 5px; /* Space between buttons */
     font-size: 20px;
     cursor: pointer;
+    min-width: 100px;
 }
