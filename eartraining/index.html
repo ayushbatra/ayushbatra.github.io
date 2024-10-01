@@ -1,1 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Notes</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Play Notes</h1>
+        <div>
+        <p><span id="correct-count">0</span>/<span id = total-count>0<span></p>
+    </div>
+    <br>
+    <br>
+    <br>
+    <button id="retry-button">Retry Last Note</button>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class="button-container">
+        <button class="note-button" data-note="E_S1">Sa</button>
+        <button class="note-button" data-note="E_R">Re</button>
+        <button class="note-button" data-note="E_G">Ga</button>
+        <button class="note-button" data-note="E_M">Ma</button>
+        <button class="note-button" data-note="E_P">Pa</button>
+        <button class="note-button" data-note="E_D">Dha</button>
+        <button class="note-button" data-note="E_N">Ni</button>
+        <button class="note-button" data-note="E_S2">Sa!</button>
+    </div>
+
+    <audio id="tanpura" src="data/E_TANPURA.wav" loop>does the browser support audio</audio>
+
+    <script src="script.js"></script>
+</body>
+</html>
 
