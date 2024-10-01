@@ -39,7 +39,6 @@ buttons.forEach(button => {
                 correctCountDisplay.textContent = correctNotesClicked;
             }
             button.style.backgroundColor = 'blue';
-            sleep(500);
             already_guessed_wrong = 0;
             resetButtonColors()
             const all_notes = ["E_S1", "E_R", "E_G", "E_M", "E_P", "E_D", "E_N", "E_S2"];
