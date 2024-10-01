@@ -1,0 +1,37 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f0f0f0;
+    padding: 0; /* Remove padding to avoid unintended spacing */
+    margin: 0; /* Remove default margin */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center-aligns the content */
+    justify-content: center; /* Vertically center content */
+    height: 100vh; /* Full height of the viewport */
+}
+
+h1 {
+    margin-bottom: 20px; /* Space below the heading */
+}
+
+#retry-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 20px; /* Space below the Retry button */
+}
+
+.button-container {
+    display: flex;
+    flex-wrap: wrap; /* Allows buttons to wrap to the next line */
+    justify-content: center; /* Center-aligns buttons */
+    margin: 0; /* Remove additional margin */
+}
+
+.note-button {
+    padding: 10px 20px;
+    margin: 5px; /* Space between buttons */
+    font-size: 16px;
+    cursor: pointer;
+}
