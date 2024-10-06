@@ -5,6 +5,7 @@ let already_guessed_wrong = 0;
 
 const buttons = document.querySelectorAll('.note-button');
 const tanpuraAudio = document.getElementById('tanpura');
+tanpuraAudio.volume = 0.2;
 
 const totalCountDisplay = document.getElementById('total-count');
 const correctCountDisplay = document.getElementById('correct-count');
