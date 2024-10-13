@@ -7,6 +7,10 @@ const buttons = document.querySelectorAll('.note-button');
 const tanpuraAudio = document.getElementById('tanpura');
 const volumeSlider = document.getElementById('volume-slider');
 
+const guessButtons = document.querySelectorAll('.guess-button');
+const playButtons = document.querySelectorAll('.play-button');
+
+
 // Set initial volume
 tanpuraAudio.volume = volumeSlider.value;
 
@@ -28,9 +32,15 @@ function resetButtonColors() {
         button.style.backgroundColor = 'white'; // Reset background color to white
     });
 }
+playButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        const note = button.dataset.note;
+        playSound(note); // Play the sound associated with the button
+    });
+});
 
 
-buttons.forEach(button => {
+guessButtons.forEach(button => {
     button.addEventListener('click', () => {
         const note = button.dataset.note;
         // totalCountDisplay++;
