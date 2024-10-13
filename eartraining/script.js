@@ -1,14 +1,15 @@
+
 let lastNote = "E_S1";
 let totalNotesClicked = 0; // Counter for total notes clicked
 let correctNotesClicked = 0; // Counter for correct notes clicked
 let already_guessed_wrong = 0;
 
-const buttons = document.querySelectorAll('.note-button');
+// const buttons = document.querySelectorAll('.note-button');
 const tanpuraAudio = document.getElementById('tanpura');
 const volumeSlider = document.getElementById('volume-slider');
 
-const guessButtons = document.querySelectorAll('.guess_button');
-const playButtons = document.querySelectorAll('.play button');
+const guessButtons = document.querySelectorAll('.guess-button');
+const playButtons = document.querySelectorAll('.play-button');
 
 
 // Set initial volume
@@ -28,7 +29,7 @@ const correctCountDisplay = document.getElementById('correct-count');
 
 
 function resetButtonColors() {
-    buttons.forEach(button => {
+    guessButtons.forEach(button => {
         button.style.backgroundColor = 'white'; // Reset background color to white
     });
 }
@@ -97,4 +98,3 @@ function sleep(milliseconds) {
 
 
 tanpuraAudio.play();
-
