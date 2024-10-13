@@ -10,7 +10,7 @@ body {
     flex-direction: column;
     align-items: center; /* Center-aligns the content */
     justify-content: center; /* Vertically center content */
-    height: 100vh; /* Full height of the viewport */
+/*     height: 100vh; /* Full height of the viewport */ */
 }
 
 h1 {
