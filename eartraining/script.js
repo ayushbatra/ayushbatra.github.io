@@ -7,8 +7,8 @@ const buttons = document.querySelectorAll('.note-button');
 const tanpuraAudio = document.getElementById('tanpura');
 const volumeSlider = document.getElementById('volume-slider');
 
-const guessButtons = document.querySelectorAll('.guess-button');
-const playButtons = document.querySelectorAll('.play-button');
+const guessButtons = document.querySelectorAll('.guess_button');
+const playButtons = document.querySelectorAll('.play button');
 
 
 // Set initial volume
