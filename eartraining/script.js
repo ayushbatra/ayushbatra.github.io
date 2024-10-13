@@ -89,7 +89,7 @@ document.getElementById('retry-button').addEventListener('click', () => {
 function playSound(note) {
     const audio = new Audio(`data/${note}.wav`);
     audio.play();
-    lastNote = note;  // Store the last note played
+    // lastNote = note;  // Store the last note played
 }
 
 function sleep(milliseconds) {
