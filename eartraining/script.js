@@ -12,6 +12,18 @@ const guessButtons = document.querySelectorAll('.guess-button');
 const playButtons = document.querySelectorAll('.play-button');
 
 
+const audioCache = {};
+const allNotes = ["E_S1", "E_R", "E_G", "E_M", "E_P", "E_D", "E_N", "E_S2"];
+
+// Preload audio files into cache
+function preloadAudio() {
+    allNotes.forEach(note => {
+        const audio = new Audio(`data/${note}.wav`);
+        audioCache[note] = audio; // Store audio in cache
+    });
+}
+preloadAudio()
+
 // Set initial volume
 tanpuraAudio.volume = volumeSlider.value;
 
@@ -65,7 +77,6 @@ guessButtons.forEach(button => {
             button.style.backgroundColor = 'blue';
             already_guessed_wrong = 0;
             resetButtonColors()
-            const all_notes = ["E_S1", "E_R", "E_G", "E_M", "E_P", "E_D", "E_N", "E_S2"];
             const randomIndex = Math.floor(Math.random() * all_notes.length);
             const randomNote = all_notes[randomIndex];
             lastNote = randomNote
@@ -86,15 +97,33 @@ document.getElementById('retry-button').addEventListener('click', () => {
     }
 });
 
+// function playSound(note) {
+//     const audio = new Audio(`data/${note}.wav`);
+//     audio.play();
+//     // lastNote = note;  // Store the last note played
+// }
 function playSound(note) {
-    const audio = new Audio(`data/${note}.wav`);
-    audio.play();
-    // lastNote = note;  // Store the last note played
+    const audio = audioCache[note];
+    if (audio) {
+        // const newAudio = new Audio(audio.src); // Create a new instance for each play
+        // newAudio.play(); // Play the sound
+
+        audio.play();
+    } else {
+        console.error(`Audio not cached for note: ${note}`);
+    }
 }
+
 
 function sleep(milliseconds) {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
 }
 
 
-tanpuraAudio.play();
+// tanpuraAudio.play();
+document.body.addEventListener('click', () => {
+    if (tanpuraAudio.paused) {
+        tanpuraAudio.play();
+    }
+});
+
