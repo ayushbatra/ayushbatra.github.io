@@ -13,11 +13,11 @@ const playButtons = document.querySelectorAll('.play-button');
 
 
 const audioCache = {};
-const allNotes = ["E_S1", "E_R", "E_G", "E_M", "E_P", "E_D", "E_N", "E_S2"];
+const all_notes = ["E_S1", "E_R", "E_G", "E_M", "E_P", "E_D", "E_N", "E_S2"];
 
 // Preload audio files into cache
 function preloadAudio() {
-    allNotes.forEach(note => {
+    all_notes.forEach(note => {
         const audio = new Audio(`data/${note}.wav`);
         audioCache[note] = audio; // Store audio in cache
     });
