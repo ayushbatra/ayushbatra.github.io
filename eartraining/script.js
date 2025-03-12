@@ -105,10 +105,10 @@ document.getElementById('retry-button').addEventListener('click', () => {
 function playSound(note) {
     const audio = audioCache[note];
     if (audio) {
-        // const newAudio = new Audio(audio.src); // Create a new instance for each play
-        // newAudio.play(); // Play the sound
+        const newAudio = new Audio(audio.src); // Create a new instance for each play
+        newAudio.play(); // Play the sound
 
-        audio.play();
+        // audio.play();
     } else {
         console.error(`Audio not cached for note: ${note}`);
     }
