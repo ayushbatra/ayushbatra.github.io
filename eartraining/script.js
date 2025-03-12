@@ -102,13 +102,27 @@ document.getElementById('retry-button').addEventListener('click', () => {
 //     audio.play();
 //     // lastNote = note;  // Store the last note played
 // }
+// function playSound(note) {
+//     const audio = audioCache[note];
+//     if (audio) {
+//         const newAudio = new Audio(audio.src); // Create a new instance for each play
+//         newAudio.play(); // Play the sound
+
+//         // audio.play();
+//     } else {
+//         console.error(`Audio not cached for note: ${note}`);
+//     }
+// }
 function playSound(note) {
     const audio = audioCache[note];
-    if (audio) {
-        const newAudio = new Audio(audio.src); // Create a new instance for each play
-        newAudio.play(); // Play the sound
 
-        // audio.play();
+    if (audio) {
+        // If audio is already playing, stop it and reset the time
+        if (!audio.paused) {
+            audio.pause(); // Stop the current sound
+            audio.currentTime = 0; // Reset to the start of the audio
+        }
+        audio.play(); // Play the sound again
     } else {
         console.error(`Audio not cached for note: ${note}`);
     }
