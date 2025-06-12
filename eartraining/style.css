@@ -1,6 +1,20 @@
 
-
 body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #000; /* Set background to black */
+    color: #fff; /* Set text color to white */
+    padding: 0; /* Remove padding to avoid unintended spacing */
+    margin: 0; /* Remove default margin */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center-aligns the content */
+    justify-content: center; /* Vertically center content */
+    height: 100vh; /* Full height of the viewport */
+}
+
+
+/* body {
     font-family: Arial, sans-serif;
     text-align: center;
     background-color: #f0f0f0;
@@ -12,7 +26,7 @@ body {
     justify-content: center; /* Vertically center content */
 /*     height: 100vh; /* Full height of the viewport */ */
 }
-
+ */
 h1 {
     margin-bottom: 20px; /* Space below the heading */
 }
