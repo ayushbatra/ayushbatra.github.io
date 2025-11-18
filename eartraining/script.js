@@ -13,8 +13,8 @@ const playButtons = document.querySelectorAll('.play-button');
 
 
 const audioCache = {};
-// const all_notes = ["E_S1", "E_R_KOMAL", "E_R", "E_G_KOMAL", "E_G", "E_M", "E_M_TEEVRA", "E_P", "E_D_KOMAL", "E_D", "E_N_KOMAL", "E_N", "E_S2"];
-const all_notes = ["E_S1", "E_R",  "E_G", "E_M","E_P",  "E_D", "E_N", "E_S2"];
+const all_notes = ["E_S1", "E_R_KOMAL", "E_R", "E_G_KOMAL", "E_G", "E_M", "E_M_TEEVRA", "E_P", "E_D_KOMAL", "E_D", "E_N_KOMAL", "E_N", "E_S2"];
+// const all_notes = ["E_S1", "E_R",  "E_G", "E_M","E_P",  "E_D", "E_N", "E_S2"];
 
 // Preload audio files into cache
 function preloadAudio() {
