@@ -56,6 +56,7 @@ playButtons.forEach(button => {
 
 guessButtons.forEach(button => {
     button.addEventListener('click', () => {
+        console.log("Guess button pressed")
         const note = button.dataset.note;
         // totalCountDisplay++;
         if (already_guessed_wrong!=1){
