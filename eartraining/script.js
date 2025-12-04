@@ -150,6 +150,7 @@ let analyser = null;
 let pitchBuf = null;
 
 async function startPitchEngine() {
+    console.log("started pitch engine")
     if (!audioCtxPitch) {
         audioCtxPitch = new AudioContext();
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
