@@ -13,8 +13,7 @@ const playButtons = document.querySelectorAll('.play-button');
 
 
 const audioCache = {};
-const all_notes = ["E_S1", "E_R_KOMAL", "E_R", "E_G_KOMAL", "E_G", "E_M", "E_M_TEEVRA", "E_P", "E_D_KOMAL", "E_D", "E_N_KOMAL", "E_N", "E_S2"];
-// const all_notes = ["E_S1", "E_R",  "E_G", "E_M","E_P",  "E_D", "E_N", "E_S2"];
+const all_notes = ["E_S1", "E_R", "E_G", "E_M", "E_P", "E_D", "E_N", "E_S2"];
 
 // Preload audio files into cache
 function preloadAudio() {
@@ -56,7 +55,6 @@ playButtons.forEach(button => {
 
 guessButtons.forEach(button => {
     button.addEventListener('click', () => {
-        console.log("Guess button pressed")
         const note = button.dataset.note;
         // totalCountDisplay++;
         if (already_guessed_wrong!=1){
@@ -69,7 +67,6 @@ guessButtons.forEach(button => {
             // Change the color of the button to red
             button.style.backgroundColor = 'red';
             already_guessed_wrong = 1;
-            startPitchEngine();
         }
         else{
             // correctCountDisplay++;
@@ -84,7 +81,7 @@ guessButtons.forEach(button => {
             const randomNote = all_notes[randomIndex];
             lastNote = randomNote
             playSound(lastNote);
-            startPitchEngine();
+
         }
     });
 });
@@ -92,7 +89,6 @@ guessButtons.forEach(button => {
 
 document.getElementById('retry-button').addEventListener('click', () => {
     if (lastNote) {
-        startPitchEngine();
         playSound(lastNote);
     }    
     if (tanpuraAudio.paused){
@@ -144,90 +140,4 @@ document.body.addEventListener('click', () => {
         tanpuraAudio.play();
     }
 });
-
-// ------- PITCH DETECTION (mic) -------
-let audioCtxPitch = null;
-let analyser = null;
-let pitchBuf = null;
-
-async function startPitchEngine() {
-    console.log("started pitch engine")
-    if (!audioCtxPitch) {
-        audioCtxPitch = new AudioContext();
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        const src = audioCtxPitch.createMediaStreamSource(stream);
-
-        analyser = audioCtxPitch.createAnalyser();
-        analyser.fftSize = 2048;
-        pitchBuf = new Float32Array(analyser.fftSize);
-
-        src.connect(analyser);
-        detectLoop();
-    }
-}
-
-function autoCorrelate(buf, sampleRate) {
-    let SIZE = buf.length;
-    let MAX = SIZE / 2;
-    let bestOffset = -1;
-    let bestCorrelation = 0;
-    let rms = 0;
-
-    for (let i = 0; i < SIZE; i++) rms += buf[i] * buf[i];
-    rms = Math.sqrt(rms / SIZE);
-    if (rms < 0.01) return null;
-
-    let lastCorrelation = 1;
-
-    for (let offset = 0; offset < MAX; offset++) {
-        let correlation = 0;
-        for (let i = 0; i < MAX; i++)
-            correlation += Math.abs(buf[i] - buf[i + offset]);
-
-        correlation = 1 - correlation / MAX;
-
-        if (correlation > bestCorrelation) {
-            bestCorrelation = correlation;
-            bestOffset = offset;
-        } else if (correlation < lastCorrelation) {
-            return sampleRate / bestOffset;
-        }
-
-        lastCorrelation = correlation;
-    }
-
-    return null;
-}
-
-function freqToMidi(freq) {
-    return Math.round(69 + 12 * Math.log2(freq / 440));
-}
-function midiToClass(midi) {
-    return (midi % 12 + 12) % 12;
-}
-
-function handleDetectedPitch(freq) {
-    const midi = freqToMidi(freq);
-    const detectedClass = midiToClass(midi);
-    const expectedClass = noteClass[lastNote];
-
-    if (detectedClass === expectedClass) {
-        console.log("Correct Note (any octave):", freq.toFixed(1), "Hz");
-    } else {
-        console.log("Wrong note:", freq.toFixed(1), "Hz");
-    }
-}
-
-function detectLoop() {
-    analyser.getFloatTimeDomainData(pitchBuf);
-    const pitch = autoCorrelate(pitchBuf, audioCtxPitch.sampleRate);
-
-    if (pitch) handleDetectedPitch(pitch);
-
-    requestAnimationFrame(detectLoop);
-}
-
-
-
-
 
