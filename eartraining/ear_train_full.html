@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Notes</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Ear Training (Escale)</h1>
+        <div>
+        <p><span id="correct-count">0</span>/<span id = "total-count">0<span></p>
+    </div>
+    <br>
+    <br>
+    <button id="retry-button">Retry Last Note</button>
+    <br>
+    <br>
+            Guess
+            <br>
+    <div class="button-container">
+        <button class="guess-button" data-note="E_S1">Sa</button>
+        <button class="guess-button" data-note="E_R_KOMAL">Re_</button>
+        <button class="guess-button" data-note="E_R">Re</button>
+        <button class="guess-button" data-note="E_G_KOMAL">Ga_</button>
+        <button class="guess-button" data-note="E_G">Ga</button>
+        <button class="guess-button" data-note="E_M">Ma</button>
+        <button class="guess-button" data-note="E_M_TEEVRA">Ma*</button>
+        <button class="guess-button" data-note="E_P">Pa</button>
+        <button class="guess-button" data-note="E_D_KOMAL">Dha_</button>
+        <button class="guess-button" data-note="E_D">Dha</button>
+        <button class="guess-button" data-note="E_N_KOMAL">Ni_</button>
+        <button class="guess-button" data-note="E_N">Ni</button>
+        <button class="guess-button" data-note="E_S2">Sa!</button>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    Play
+    <br>
+    <br>
+    <br>
+    <div class="button-container">
+        <button class="play-button" data-note="E_S1">Sa</button>
+        <button class="play-button" data-note="E_R_KOMAL">Re_</button>
+        <button class="play-button" data-note="E_R">Re</button>
+        <button class="play-button" data-note="E_G_KOMAL">Ga_</button>
+        <button class="play-button" data-note="E_G">Ga</button>
+        <button class="play-button" data-note="E_M">Ma</button>
+        <button class="play-button" data-note="E_M_TEEVRA">Ma*</button>
+        <button class="play-button" data-note="E_P">Pa</button>
+        <button class="play-button" data-note="E_D_KOMAL">Dha_</button>
+        <button class="play-button" data-note="E_D">Dha</button>
+        <button class="play-button" data-note="E_N_KOMAL">Ni_</button>
+        <button class="play-button" data-note="E_N">Ni</button>
+        <button class="play-button" data-note="E_S2">Sa!</button>
+    </div>        
+    <br>
+    <br>
+    <br>
+    <br>
+    <h2>Settings</h2>
+    <div>
+        <label for="volume-slider">Volume: </label>
+        <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.2">
+    </div>
+    <audio id="tanpura" src="data/E_TANPURA.wav" loop>does the browser support audio</audio>
+
+    <script src="script_full.js"></script>
+</body>
+</html>
