@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="theme-color" content="#f7d9df" />
+<title>A little question for you</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,400;1,9..144,500&family=Nunito:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --blush:#f7c9d4; --rose:#e29aa8; --rose-deep:#cf8294;
+    --cream:#fffaf6; --peach:#ffe6d6; --lav:#efe6f4;
+    --ink:#6f5159; --soft:#9b8088;
+    --shadow:0 24px 60px rgba(190,130,150,.22);
+  }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ height:100%; margin:0; }
+  body{
+    font-family:"Nunito",system-ui,sans-serif; color:var(--ink);
+    background:linear-gradient(160deg,#fff8f4 0%,#fbe7ec 50%,#f1e9f5 100%);
+    background-attachment:fixed; min-height:100vh; overflow-x:hidden; position:relative;
+    display:flex; align-items:center; justify-content:center; padding:22px;
+  }
+
+  /* soft, sparse petals drifting up — calm, not a swarm */
+  #bg{ position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:0; }
+  .petal{ position:absolute; bottom:-10vh; opacity:0; font-size:1.3rem;
+    animation:drift linear infinite; will-change:transform; }
+  @keyframes drift{
+    0%{ transform:translateY(0) rotate(0); opacity:0 }
+    15%,85%{ opacity:.45 }
+    100%{ transform:translateY(-118vh) rotate(220deg); opacity:0 }
+  }
+
+  /* gentle glow behind the card */
+  .card-wrap{ position:relative; z-index:2; width:100%; max-width:430px; }
+  .card-wrap::before{ content:""; position:absolute; inset:-30px; z-index:-1;
+    background:radial-gradient(closest-side,rgba(255,210,222,.55),transparent 70%);
+    filter:blur(12px); animation:breathe 7s ease-in-out infinite; }
+  @keyframes breathe{ 0%,100%{ transform:scale(1); opacity:.8 } 50%{ transform:scale(1.06); opacity:1 } }
+
+  .card{
+    background:var(--cream); border:1.5px solid rgba(255,255,255,.9);
+    border-radius:30px; padding:40px 30px 34px; text-align:center;
+    box-shadow:var(--shadow); animation:rise-in .7s cubic-bezier(.2,1,.4,1) both;
+  }
+  @keyframes rise-in{ from{ opacity:0; transform:translateY(18px) scale(.97) } to{ opacity:1; transform:none } }
+
+  .dots{ display:flex; gap:7px; justify-content:center; margin-bottom:22px; }
+  .dots i{ width:8px; height:8px; border-radius:50%; background:#f0d6dd; transition:.35s; }
+  .dots i.on{ background:var(--rose); width:22px; }
+
+  .accent{ font-size:2.7rem; display:inline-block; animation:sway 4s ease-in-out infinite; }
+  @keyframes sway{ 0%,100%{ transform:translateY(0) rotate(-4deg) } 50%{ transform:translateY(-6px) rotate(4deg) } }
+
+  h1{ font-family:"Fraunces",Georgia,serif; font-style:italic; font-weight:500;
+    font-size:1.7rem; line-height:1.32; color:var(--rose-deep); margin:.45em 0 .2em; }
+  p.sub{ margin:.1em 0 1.5em; font-size:1rem; color:var(--soft); font-weight:600; }
+
+  .btns{ display:flex; flex-direction:column; gap:11px; align-items:center; }
+  .btn{
+    font-family:"Nunito",sans-serif; font-weight:800; font-size:1.02rem; letter-spacing:.2px;
+    color:#fff; border:none; cursor:pointer; padding:13px 26px; border-radius:999px; min-width:200px;
+    background:linear-gradient(135deg,var(--blush),var(--rose));
+    box-shadow:0 12px 24px rgba(206,130,148,.3); transition:transform .18s ease, box-shadow .18s, filter .18s;
+  }
+  .btn:hover{ transform:translateY(-2px); filter:brightness(1.02); box-shadow:0 16px 30px rgba(206,130,148,.34); }
+  .btn:active{ transform:translateY(0) scale(.98); }
+  .btn.alt{ background:linear-gradient(135deg,#fbe0d2,#f6c9b6); color:#9a5f56; box-shadow:0 10px 20px rgba(220,160,140,.28); }
+  .btn.quiet{ background:#fbeef1; color:var(--rose-deep); box-shadow:0 8px 18px rgba(206,130,148,.16); }
+
+  .step{ display:none; animation:fade-up .5s ease both; }
+  .step.active{ display:block; }
+  @keyframes fade-up{ from{ opacity:0; transform:translateY(12px) } to{ opacity:1; transform:none } }
+
+  .final-btns{ display:flex; gap:14px; justify-content:center; align-items:center; flex-wrap:wrap; margin-top:4px; }
+  .final-btns .btn{ min-width:130px; }
+  #noBtn{ background:linear-gradient(135deg,#e7dfe6,#cdbfca); color:#7c6a76; box-shadow:0 8px 18px rgba(150,130,150,.26); }
+  #noBtn.loose{ position:fixed; z-index:6; transition:left .22s ease, top .22s ease, transform .22s ease; }
+  .hint{ margin-top:18px; font-size:.9rem; color:var(--soft); min-height:1.2em; font-weight:600; font-style:italic; }
+
+  .success .big{ font-size:3.4rem; animation:beat 1.6s ease-in-out infinite; }
+  @keyframes beat{ 0%,100%{ transform:scale(1) } 30%{ transform:scale(1.12) } 45%{ transform:scale(1) } }
+
+  .note{ position:fixed; bottom:10px; left:0; right:0; text-align:center; z-index:2;
+    font-size:.72rem; color:#caa9b4; font-weight:600; letter-spacing:.3px; }
+  @media (max-width:380px){ h1{ font-size:1.5rem } .card{ padding:32px 22px } }
+</style>
+</head>
+<body>
+  <div id="bg" aria-hidden="true"></div>
+
+  <div class="card-wrap">
+    <main class="card">
+      <div class="dots" id="dots"></div>
+
+      <section class="step active" data-step>
+        <span class="accent">🌷</span>
+        <h1>Hey, you.<br>Can I steal a moment?</h1>
+        <p class="sub">There's something I've been wanting to say.</p>
+        <div class="btns"><button class="btn" data-next>I'm listening</button></div>
+      </section>
+
+      <section class="step" data-step>
+        <span class="accent">🌿</span>
+        <h1>Be honest with me —<br>do you feel this too?</h1>
+        <p class="sub">that quiet little something between us</p>
+        <div class="btns">
+          <button class="btn" data-next>I do</button>
+          <button class="btn alt" data-next>I really do</button>
+        </div>
+      </section>
+
+      <section class="step" data-step>
+        <span class="accent">🩷</span>
+        <h1>When it's you and me,<br>time kind of disappears, right?</h1>
+        <p class="sub">I keep losing track of it</p>
+        <div class="btns">
+          <button class="btn alt" data-next>I've noticed that</button>
+          <button class="btn" data-next>Every single time</button>
+        </div>
+      </section>
+
+      <section class="step" data-step>
+        <span class="accent">🤍</span>
+        <h1>So if I asked<br>for a little more of your time…</h1>
+        <p class="sub">no pressure, I promise</p>
+        <div class="btns">
+          <button class="btn alt" data-next>I'd like that</button>
+          <button class="btn" data-next>I'd say yes</button>
+        </div>
+      </section>
+
+      <section class="step" data-step id="finalStep">
+        <span class="accent">💌</span>
+        <h1>Then here goes.<br>Will you be my Valentine?</h1>
+        <p class="sub">whenever you're ready</p>
+        <div class="final-btns">
+          <button class="btn" id="yesBtn">Yes</button>
+          <button class="btn" id="noBtn">No</button>
+        </div>
+        <div class="hint" id="hint"></div>
+      </section>
+
+      <section class="step success" data-step id="successStep">
+        <div class="big">🥹🤍</div>
+        <h1>You said yes.</h1>
+        <p class="sub">You just made my whole year.<br>Happy Valentine's — it's always been you.</p>
+        <div class="btns"><button class="btn quiet" onclick="location.reload()">read it again</button></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="note">written just for you</div>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <script>
+  (function(){
+    // ---- sparse drifting petals (calm) ----
+    const bg=document.getElementById('bg');
+    const petals=['🌸','🌷','🤍','🩷'];
+    for(let i=0;i<11;i++){
+      const s=document.createElement('span');
+      s.className='petal'; s.textContent=petals[(Math.random()*petals.length)|0];
+      s.style.left=(Math.random()*100)+'vw';
+      s.style.fontSize=(0.9+Math.random()*1.3)+'rem';
+      s.style.animationDuration=(13+Math.random()*10)+'s';
+      s.style.animationDelay=(-Math.random()*18)+'s';
+      bg.appendChild(s);
+    }
+
+    // ---- step flow ----
+    const steps=[...document.querySelectorAll('[data-step]')];
+    const finalStep=document.getElementById('finalStep');
+    const successStep=document.getElementById('successStep');
+    const dotsWrap=document.getElementById('dots');
+    const progressCount=5;
+    for(let i=0;i<progressCount;i++) dotsWrap.appendChild(document.createElement('i'));
+    const dots=[...dotsWrap.children];
+    const noBtn=document.getElementById('noBtn');
+    const yesBtn=document.getElementById('yesBtn');
+    const hint=document.getElementById('hint');
+    let cur=0, armed=false;
+
+    function resetNo(){
+      noBtn.classList.remove('loose');
+      noBtn.style.left=noBtn.style.top=noBtn.style.transform=noBtn.style.margin='';
+    }
+    function show(i){
+      steps[cur].classList.remove('active'); cur=i; steps[cur].classList.add('active');
+      dots.forEach((d,idx)=>d.classList.toggle('on', idx<=Math.min(cur,progressCount-1)));
+      armed = (steps[cur]===finalStep);   // No only runs on the final step
+      if(armed) resetNo();                 // ensure Yes + No both sit together
+      if(steps[cur]===successStep) dotsWrap.style.display='none';
+    }
+    document.querySelectorAll('[data-next]').forEach(b=>
+      b.addEventListener('click',()=>{ if(cur<steps.length-1) show(cur+1); }));
+    show(0);
+
+    // ---- the gentle runaway "No" ----
+    let dodges=0;
+    const lines=['','take your time…',"I'll be right here.",'whenever you’re ready 🤍','(there’s only one answer I’m hoping for)'];
+    function makeLoose(){
+      if(noBtn.classList.contains('loose')) return;
+      const r=noBtn.getBoundingClientRect();
+      noBtn.classList.add('loose');
+      noBtn.style.left=r.left+'px'; noBtn.style.top=r.top+'px'; noBtn.style.margin='0';
+    }
+    function dodge(px,py){
+      if(!armed) return;
+      makeLoose();
+      const w=noBtn.offsetWidth,h=noBtn.offsetHeight,pad=16;
+      const r=noBtn.getBoundingClientRect(), cx=r.left+w/2, cy=r.top+h/2;
+      let ang=Math.atan2(cy-py,cx-px); if(!isFinite(ang)) ang=Math.random()*6.283;
+      const maxX=Math.max(pad,window.innerWidth-w-pad), maxY=Math.max(pad,window.innerHeight-h-pad);
+      let nx=Math.min(Math.max(pad, cx+Math.cos(ang)*150-w/2), maxX);
+      let ny=Math.min(Math.max(pad, cy+Math.sin(ang)*150-h/2), maxY);
+      if(Math.hypot(nx+w/2-px, ny+h/2-py)<120){    // cornered? hop somewhere safe
+        nx=pad+Math.random()*(maxX-pad); ny=pad+Math.random()*(maxY-pad);
+      }
+      noBtn.style.left=nx+'px'; noBtn.style.top=ny+'px';
+      noBtn.style.transform='rotate('+((Math.random()*12)-6)+'deg)';
+      dodges++;
+      hint.textContent=lines[Math.min(dodges,lines.length-1)];
+      yesBtn.style.transform='scale('+Math.min(1+dodges*0.05,1.3)+')';
+    }
+    document.addEventListener('mousemove',e=>{
+      if(!armed) return;
+      const r=noBtn.getBoundingClientRect();
+      if(Math.hypot(e.clientX-(r.left+r.width/2), e.clientY-(r.top+r.height/2))<110)
+        dodge(e.clientX,e.clientY);
+    });
+    noBtn.addEventListener('mouseenter',e=>dodge(e.clientX,e.clientY));
+    noBtn.addEventListener('mousedown',e=>{ e.preventDefault(); dodge(e.clientX,e.clientY); });
+    noBtn.addEventListener('click',e=>{ e.preventDefault(); dodge(e.clientX,e.clientY); });
+    noBtn.addEventListener('touchstart',e=>{ e.preventDefault(); const t=e.touches[0]; dodge(t.clientX,t.clientY); },{passive:false});
+
+    // ---- yes: soft pastel celebration ----
+    const palette=['#f7c9d4','#f6b8c6','#ffe1c4','#efe0f0','#fff3da','#e9c6d2'];
+    function burst(){
+      if(typeof confetti!=='function') return;
+      confetti({particleCount:90,spread:70,startVelocity:42,scalar:1.05,ticks:200,colors:palette,origin:{x:.5,y:.72}});
+      confetti({particleCount:45,angle:60,spread:60,scalar:1,colors:palette,origin:{x:0,y:1}});
+      confetti({particleCount:45,angle:120,spread:60,scalar:1,colors:palette,origin:{x:1,y:1}});
+    }
+    yesBtn.addEventListener('click',()=>{
+      dotsWrap.style.display='none';
+      show(steps.indexOf(successStep));
+      burst(); let n=0; const iv=setInterval(()=>{ burst(); if(++n>2) clearInterval(iv); },700);
+    });
+  })();
+  </script>
+</body>
+</html>
