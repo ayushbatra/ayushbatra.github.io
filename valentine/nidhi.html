@@ -184,59 +184,75 @@
     const noBtn=document.getElementById('noBtn');
     const yesBtn=document.getElementById('yesBtn');
     const hint=document.getElementById('hint');
-    let cur=0, armed=false;
+    let cur=0, armed=false, dodges=0;
 
     function resetNo(){
       noBtn.classList.remove('loose');
-      noBtn.style.left=noBtn.style.top=noBtn.style.transform=noBtn.style.margin='';
+      noBtn.style.left=''; noBtn.style.top=''; noBtn.style.transform=''; noBtn.style.margin='';
+      yesBtn.style.transform='';
     }
     function show(i){
       steps[cur].classList.remove('active'); cur=i; steps[cur].classList.add('active');
       dots.forEach((d,idx)=>d.classList.toggle('on', idx<=Math.min(cur,progressCount-1)));
-      armed = (steps[cur]===finalStep);   // No only runs on the final step
-      if(armed) resetNo();                 // ensure Yes + No both sit together
+      armed=false;
+      if(steps[cur]===finalStep){
+        resetNo(); dodges=0; hint.textContent='';
+        // show Yes + No together for a beat before No starts evading,
+        // so it never looks like it just vanished.
+        setTimeout(()=>{ armed=true; }, 500);
+      }
       if(steps[cur]===successStep) dotsWrap.style.display='none';
     }
     document.querySelectorAll('[data-next]').forEach(b=>
       b.addEventListener('click',()=>{ if(cur<steps.length-1) show(cur+1); }));
     show(0);
 
-    // ---- the gentle runaway "No" ----
-    let dodges=0;
+    // ---- the gentle runaway "No" (only on the final step) ----
     const lines=['','take your time…',"I'll be right here.",'whenever you’re ready 🤍','(there’s only one answer I’m hoping for)'];
     function makeLoose(){
       if(noBtn.classList.contains('loose')) return;
       const r=noBtn.getBoundingClientRect();
-      noBtn.classList.add('loose');
       noBtn.style.left=r.left+'px'; noBtn.style.top=r.top+'px'; noBtn.style.margin='0';
+      noBtn.classList.add('loose');     // -> position:fixed (leaves Yes centered)
+      void noBtn.offsetWidth;           // commit start pos so the first move animates
     }
-    function dodge(px,py){
-      if(!armed) return;
-      makeLoose();
-      const w=noBtn.offsetWidth,h=noBtn.offsetHeight,pad=16;
+    function place(px,py){
+      const pad=16, w=noBtn.offsetWidth, h=noBtn.offsetHeight;
+      // roam inside a visible central band so it can never run off-screen
+      const bx0=Math.max(pad, Math.round(innerWidth*0.05));
+      const bx1=Math.max(bx0, Math.min(innerWidth-w-pad, Math.round(innerWidth*0.95-w)));
+      const by0=Math.max(pad, Math.round(innerHeight*0.12));
+      const by1=Math.max(by0, Math.min(innerHeight-h-pad, Math.round(innerHeight*0.90-h)));
       const r=noBtn.getBoundingClientRect(), cx=r.left+w/2, cy=r.top+h/2;
-      let ang=Math.atan2(cy-py,cx-px); if(!isFinite(ang)) ang=Math.random()*6.283;
-      const maxX=Math.max(pad,window.innerWidth-w-pad), maxY=Math.max(pad,window.innerHeight-h-pad);
-      let nx=Math.min(Math.max(pad, cx+Math.cos(ang)*150-w/2), maxX);
-      let ny=Math.min(Math.max(pad, cy+Math.sin(ang)*150-h/2), maxY);
-      if(Math.hypot(nx+w/2-px, ny+h/2-py)<120){    // cornered? hop somewhere safe
-        nx=pad+Math.random()*(maxX-pad); ny=pad+Math.random()*(maxY-pad);
+      let ang=Math.atan2(cy-py, cx-px); if(!isFinite(ang)) ang=Math.random()*6.283;
+      let nx=cx+Math.cos(ang)*150-w/2, ny=cy+Math.sin(ang)*150-h/2;
+      nx=Math.min(Math.max(bx0,nx),bx1); ny=Math.min(Math.max(by0,ny),by1);
+      if(Math.hypot(nx+w/2-px, ny+h/2-py)<120){       // boxed in -> hop somewhere safe & visible
+        for(let k=0;k<14;k++){
+          const tx=bx0+Math.random()*(bx1-bx0), ty=by0+Math.random()*(by1-by0);
+          if(Math.hypot(tx+w/2-px, ty+h/2-py)>150){ nx=tx; ny=ty; break; }
+        }
       }
       noBtn.style.left=nx+'px'; noBtn.style.top=ny+'px';
       noBtn.style.transform='rotate('+((Math.random()*12)-6)+'deg)';
+    }
+    function dodge(px,py){
+      if(!armed) return;
+      makeLoose(); place(px,py);
       dodges++;
       hint.textContent=lines[Math.min(dodges,lines.length-1)];
-      yesBtn.style.transform='scale('+Math.min(1+dodges*0.05,1.3)+')';
+      yesBtn.style.transform='scale('+Math.min(1+dodges*0.05,1.28)+')';
     }
     document.addEventListener('mousemove',e=>{
       if(!armed) return;
       const r=noBtn.getBoundingClientRect();
-      if(Math.hypot(e.clientX-(r.left+r.width/2), e.clientY-(r.top+r.height/2))<110)
+      if(Math.hypot(e.clientX-(r.left+r.width/2), e.clientY-(r.top+r.height/2))<100)
         dodge(e.clientX,e.clientY);
     });
     noBtn.addEventListener('mouseenter',e=>dodge(e.clientX,e.clientY));
     noBtn.addEventListener('mousedown',e=>{ e.preventDefault(); dodge(e.clientX,e.clientY); });
     noBtn.addEventListener('click',e=>{ e.preventDefault(); dodge(e.clientX,e.clientY); });
+    noBtn.addEventListener('focus',()=>{ const r=noBtn.getBoundingClientRect(); dodge(r.left,r.top); });
     noBtn.addEventListener('touchstart',e=>{ e.preventDefault(); const t=e.touches[0]; dodge(t.clientX,t.clientY); },{passive:false});
 
     // ---- yes: soft pastel celebration ----
@@ -248,7 +264,6 @@
       confetti({particleCount:45,angle:120,spread:60,scalar:1,colors:palette,origin:{x:1,y:1}});
     }
     yesBtn.addEventListener('click',()=>{
-      dotsWrap.style.display='none';
       show(steps.indexOf(successStep));
       burst(); let n=0; const iv=setInterval(()=>{ burst(); if(++n>2) clearInterval(iv); },700);
     });
