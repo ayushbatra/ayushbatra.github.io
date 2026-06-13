@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birthday Tracker</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --card: #1a1d29;
+    --accent: #ff6b9d;
+    --accent2: #ffd166;
+    --text: #e8eaf0;
+    --muted: #8b90a3;
+    --today: #2a1a2e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 20px;
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.5;
+  }
+  h1 {
+    font-size: 1.6rem;
+    margin-bottom: 4px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .date { color: var(--muted); font-size: 0.9rem; margin-bottom: 24px; }
+  .section-title {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin: 24px 0 10px;
+  }
+  .card {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border: 1px solid transparent;
+  }
+  .card.today {
+    background: var(--today);
+    border-color: var(--accent);
+    box-shadow: 0 0 20px rgba(255,107,157,0.25);
+  }
+  .avatar {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 1.1rem;
+    color: #0f1117;
+    flex-shrink: 0;
+  }
+  .info { flex: 1; min-width: 0; }
+  .name { font-weight: 600; }
+  .meta { font-size: 0.85rem; color: var(--muted); }
+  .badge {
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 999px;
+    white-space: nowrap;
+    font-weight: 600;
+  }
+  .badge.today { background: var(--accent); color: #0f1117; }
+  .badge.soon { background: rgba(255,209,102,0.18); color: var(--accent2); }
+  .badge.passed { background: rgba(139,144,163,0.18); color: var(--muted); }
+  .card.passed { opacity: 0.75; }
+  .empty { color: var(--muted); font-style: italic; padding: 8px 0; }
+  .refresh {
+    margin-top: 28px;
+    background: var(--card);
+    border: 1px solid #2a2e3d;
+    color: var(--text);
+    padding: 10px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    width: 100%;
+  }
+</style>
+</head>
+<body>
+  <h1>🎂 Birthday Tracker</h1>
+  <div class="date" id="todayDate"></div>
+
+  <div class="section-title">Today</div>
+  <div id="todayList"></div>
+
+  <div class="section-title">Coming up (next 30 days)</div>
+  <div id="upcomingList"></div>
+
+  <div class="section-title">Recently passed (last 7 days)</div>
+  <div id="passedList"></div>
+
+  <button class="refresh" onclick="render()">🔔 Refresh & Notify</button>
+
+<script>
+// ====== EDIT YOUR LIST HERE ======
+const birthdays = [
+    {
+      "name": "Jyoti Madan Bua",
+      "day": 1,
+      "month": "January"
+    },
+    {
+      "name": "Ayushmaan Agrawal",
+      "day": 9,
+      "month": "January"
+    },
+    {
+      "name": "Palkesh Jain",
+      "day": 10,
+      "month": "January"
+    },
+    {
+      "name": "Amisha Dwivedi LAHS",
+      "day": 13,
+      "month": "January"
+    },
+    {
+      "name": "Aradhya Dixit LAHS",
+      "day": 13,
+      "month": "January"
+    },
+    {
+      "name": "Shivam Pasrija",
+      "day": 14,
+      "month": "January"
+    },
+    {
+      "name": "Purva Gautam",
+      "day": 15,
+      "month": "January"
+    },
+    {
+      "name": "Prachi Bansal",
+      "day": 15,
+      "month": "January"
+    },
+    {
+      "name": "Aman Bhatia",
+      "day": 16,
+      "month": "January"
+    },
+    {
+      "name": "Diya Rastogi",
+      "day": 18,
+      "month": "January"
+    },
+    {
+      "name": "Kimaya Patil",
+      "day": 19,
+      "month": "January"
+    },
+    {
+      "name": "Shresth Mehta",
+      "day": 20,
+      "month": "January"
+    },
+    {
+      "name": "Vidhi Sharma LAHS",
+      "day": 21,
+      "month": "January"
+    },
+    {
+      "name": "Shrey Bansal",
+      "day": 24,
+      "month": "January"
+    },
+    {
+      "name": "Vanshika Agrawal",
+      "day": 24,
+      "month": "January"
+    },
+    {
+      "name": "Varshit Sachdeva",
+      "day": 25,
+      "month": "January"
+    },
+    {
+      "name": "Sarthak Agrawal (Nilgiri)",
+      "day": 25,
+      "month": "January"
+    },
+    {
+      "name": "Puru Arora",
+      "day": 25,
+      "month": "January"
+    },
+    {
+      "name": "Sidhhartha Porwal",
+      "day": 25,
+      "month": "January"
+    },
+    {
+      "name": "Ayush Shrivastav (shikhar)",
+      "day": 29,
+      "month": "January"
+    },
+    {
+      "name": "Nikita Aneja",
+      "day": 29,
+      "month": "January"
+    },
+    {
+      "name": "Ananya Rawat",
+      "day": 29,
+      "month": "January"
+    },
+    {
+      "name": "Jagrit Mongiya",
+      "day": 31,
+      "month": "January"
+    },
+    {
+      "name": "Yash Mandil",
+      "day": 1,
+      "month": "February"
+    },
+    {
+      "name": "Anushka Gupta",
+      "day": 1,
+      "month": "February"
+    },
+    {
+      "name": "Kshitij Agrawal",
+      "day": 4,
+      "month": "February"
+    },
+    {
+      "name": "Granth Goyal",
+      "day": 6,
+      "month": "February"
+    },
+    {
+      "name": "Yash Malpani",
+      "day": 7,
+      "month": "February"
+    },
+    {
+      "name": "Anshuman Khetan",
+      "day": 11,
+      "month": "February"
+    },
+    {
+      "name": "Himanshu Chandwani",
+      "day": 18,
+      "month": "February"
+    },
+    {
+      "name": "Medha Kant",
+      "day": 1,
+      "month": "March"
+    },
+    {
+      "name": "Yash Agrawal(Ramu)(VolleyBall)",
+      "day": 3,
+      "month": "March"
+    },
+    {
+      "name": "Harit Jaiswal",
+      "day": 5,
+      "month": "March"
+    },
+    {
+      "name": "Aditi Johri",
+      "day": 5,
+      "month": "March"
+    },
+    {
+      "name": "Shivang Dogra",
+      "day": 5,
+      "month": "March"
+    },
+    {
+      "name": "Sumedha Gupta",
+      "day": 5,
+      "month": "March"
+    },
+    {
+      "name": "Sarthak Agrawal (shikhar)",
+      "day": 8,
+      "month": "March"
+    },
+    {
+      "name": "Poonam Suneja Bua",
+      "day": 8,
+      "month": "March"
+    },
+    {
+      "name": "Pranjal Singh (shikhar)(GGHS)",
+      "day": 10,
+      "month": "March"
+    },
+    {
+      "name": "Umesh Singh Rajawat",
+      "day": 11,
+      "month": "March"
+    },
+    {
+      "name": "Priyangi Gaur",
+      "day": 12,
+      "month": "March"
+    },
+    {
+      "name": "Varun Kawatra(Vishu Adarsh Colony)",
+      "day": 12,
+      "month": "March"
+    },
+    {
+      "name": "Anwesh Kulshreshtha",
+      "day": 14,
+      "month": "March"
+    },
+    {
+      "name": "Mansi Saxena",
+      "day": 14,
+      "month": "March"
+    },
+    {
+      "name": "Seema Nagpal",
+      "day": 16,
+      "month": "March"
+    },
+    {
+      "name": "Pulkit Goyal (Lahs D)",
+      "day": 17,
+      "month": "March"
+    },
+    {
+      "name": "Divya Pasrija Mami",
+      "day": 18,
+      "month": "March"
+    },
+    {
+      "name": "Ritansha Singhal",
+      "day": 22,
+      "month": "March"
+    },
+    {
+      "name": "Arunesh Singh nilgiri chacha",
+      "day": 23,
+      "month": "March"
+    },
+    {
+      "name": "Jitesh Batra",
+      "day": 27,
+      "month": "March"
+    },
+    {
+      "name": "Aditee Lall",
+      "day": 28,
+      "month": "March"
+    },
+    {
+      "name": "Ritu Pasrija",
+      "day": 31,
+      "month": "March"
+    },
+    {
+      "name": "Astha Nagpal",
+      "day": 4,
+      "month": "April"
+    },
+    {
+      "name": "Priyam Singh",
+      "day": 5,
+      "month": "April"
+    },
+    {
+      "name": "Rahul Arora (Adarch Colony)",
+      "day": 9,
+      "month": "April"
+    },
+    {
+      "name": "Ananya Jain",
+      "day": 12,
+      "month": "April"
+    },
+    {
+      "name": "Tushar Bhartiya",
+      "day": 14,
+      "month": "April"
+    },
+    {
+      "name": "Arpit Upadhyay",
+      "day": 18,
+      "month": "April"
+    },
+    {
+      "name": "Nishank Siddharth",
+      "day": 21,
+      "month": "April"
+    },
+    {
+      "name": "Atul Chaurasia",
+      "day": 21,
+      "month": "April"
+    },
+    {
+      "name": "Abhisek Maji",
+      "day": 22,
+      "month": "April"
+    },
+    {
+      "name": "Muskan Pardasani",
+      "day": 27,
+      "month": "April"
+    },
+    {
+      "name": "Aditya Sahu",
+      "day": 2,
+      "month": "May"
+    },
+    {
+      "name": "Rita Pasrija",
+      "day": 3,
+      "month": "May"
+    },
+    {
+      "name": "Ananya Patankar",
+      "day": 9,
+      "month": "May"
+    },
+    {
+      "name": "Akarsh Pratap Singh",
+      "day": 11,
+      "month": "May"
+    },
+    {
+      "name": "Mansi Jain",
+      "day": 11,
+      "month": "May"
+    },
+    {
+      "name": "Dhruv Chaturvedi",
+      "day": 12,
+      "month": "May"
+    },
+    {
+      "name": "Akshat Bhutyani",
+      "day": 16,
+      "month": "May"
+    },
+    {
+      "name": "Hardik Madaan",
+      "day": 17,
+      "month": "May"
+    },
+    {
+      "name": "Neha Madan nagpur sister",
+      "day": 17,
+      "month": "May"
+    },
+    {
+      "name": "Amokh Varma",
+      "day": 20,
+      "month": "May"
+    },
+    {
+      "name": "Rohit Vijay",
+      "day": 29,
+      "month": "May"
+    },
+    {
+      "name": "Vaibhav Khurana Adarsh Colony",
+      "day": 1,
+      "month": "June"
+    },
+    {
+      "name": "Tanisha Tomar",
+      "day": 8,
+      "month": "June"
+    },
+    {
+      "name": "Jatin Goel",
+      "day": 9,
+      "month": "June"
+    },
+    {
+      "name": "Shreyansh Agrawal",
+      "day": 13,
+      "month": "June"
+    },
+    {
+      "name": "Harshal Sharma",
+      "day": 13,
+      "month": "June"
+    },
+    {
+      "name": "Tarun Rajora",
+      "day": 16,
+      "month": "June"
+    },
+    {
+      "name": "Anshuman Singh",
+      "day": 18,
+      "month": "June"
+    },
+    {
+      "name": "Bhupendra Singh Rajpoot",
+      "day": 19,
+      "month": "June"
+    },
+    {
+      "name": "Anant Bhansali",
+      "day": 20,
+      "month": "June"
+    },
+    {
+      "name": "Gaurav Nagpal",
+      "day": 20,
+      "month": "June"
+    },
+    {
+      "name": "Hardik Agrawal",
+      "day": 21,
+      "month": "June"
+    },
+    {
+      "name": "Aditya Verma",
+      "day": 22,
+      "month": "June"
+    },
+    {
+      "name": "Hardik Hurkat",
+      "day": 23,
+      "month": "June"
+    },
+    {
+      "name": "Abhinav Meena",
+      "day": 26,
+      "month": "June"
+    },
+    {
+      "name": "Mridul Agrawal",
+      "day": 6,
+      "month": "July"
+    },
+    {
+      "name": "Deepankar Tiwari",
+      "day": 7,
+      "month": "July"
+    },
+    {
+      "name": "Ishan Chaudhary",
+      "day": 8,
+      "month": "July"
+    },
+    {
+      "name": "Mohit Madan",
+      "day": 11,
+      "month": "July"
+    },
+    {
+      "name": "Pankaj Meena",
+      "day": 12,
+      "month": "July"
+    },
+    {
+      "name": "Yashodhar Jain",
+      "day": 14,
+      "month": "July"
+    },
+    {
+      "name": "Harsh Baheti",
+      "day": 18,
+      "month": "July"
+    },
+    {
+      "name": "Asim Rajvanshi",
+      "day": 19,
+      "month": "July"
+    },
+    {
+      "name": "Prabhpreet Singh",
+      "day": 20,
+      "month": "July"
+    },
+    {
+      "name": "Anchita Agrawal",
+      "day": 21,
+      "month": "July"
+    },
+    {
+      "name": "Kaushal Sharma",
+      "day": 8,
+      "month": "August"
+    },
+    {
+      "name": "Yash Garg",
+      "day": 10,
+      "month": "August"
+    },
+    {
+      "name": "Pranav Suneja",
+      "day": 13,
+      "month": "August"
+    },
+    {
+      "name": "Raghuveer Sharan Pasrija",
+      "day": 21,
+      "month": "August"
+    },
+    {
+      "name": "Priya Nagpal",
+      "day": 25,
+      "month": "August"
+    },
+    {
+      "name": "Dhruv Batra",
+      "day": 26,
+      "month": "August"
+    },
+    {
+      "name": "Krishan Bansal",
+      "day": 29,
+      "month": "August"
+    },
+    {
+      "name": "Ambuj Verma",
+      "day": 30,
+      "month": "August"
+    },
+    {
+      "name": "Rachit Arora",
+      "day": 31,
+      "month": "August"
+    },
+    {
+      "name": "Raghav Modi",
+      "day": 3,
+      "month": "September"
+    },
+    {
+      "name": "Himanshu Rajput",
+      "day": 8,
+      "month": "September"
+    },
+    {
+      "name": "Piyush Gupta",
+      "day": 10,
+      "month": "September"
+    },
+    {
+      "name": "Soham Gaikwad",
+      "day": 11,
+      "month": "September",
+      "year": 2000
+    },
+    {
+      "name": "Vijay Pratap Singh",
+      "day": 13,
+      "month": "September"
+    },
+    {
+      "name": "Ishan Bhutyani",
+      "day": 14,
+      "month": "September"
+    },
+    {
+      "name": "Akshat Suneja",
+      "day": 14,
+      "month": "September"
+    },
+    {
+      "name": "Sangita Batra",
+      "day": 19,
+      "month": "September"
+    },
+    {
+      "name": "Soniya Suneja Batra",
+      "day": 19,
+      "month": "September"
+    },
+    {
+      "name": "Anisha Goswami",
+      "day": 22,
+      "month": "September"
+    },
+    {
+      "name": "Himanshu Pachori",
+      "day": 23,
+      "month": "September"
+    },
+    {
+      "name": "Paarth Aneja",
+      "day": 23,
+      "month": "September"
+    },
+    {
+      "name": "Saumya Upadhyay",
+      "day": 26,
+      "month": "September"
+    },
+    {
+      "name": "Akshat Pasrija",
+      "day": 27,
+      "month": "September"
+    },
+    {
+      "name": "Shubham Pasrija",
+      "day": 29,
+      "month": "September"
+    },
+    {
+      "name": "Hritik Singh Kushwah",
+      "day": 30,
+      "month": "September"
+    },
+    {
+      "name": "Vidushi Pathak",
+      "day": 30,
+      "month": "September"
+    },
+    {
+      "name": "Tushar Jain",
+      "day": 30,
+      "month": "September"
+    },
+    {
+      "name": "Kanchi Batra",
+      "day": 30,
+      "month": "September"
+    },
+    {
+      "name": "Chandramani Telang",
+      "day": 1,
+      "month": "October"
+    },
+    {
+      "name": "Naman Mittal",
+      "day": 3,
+      "month": "October"
+    },
+    {
+      "name": "Jay Paranjape",
+      "day": 4,
+      "month": "October"
+    },
+    {
+      "name": "Shivanshu Tyagi",
+      "day": 10,
+      "month": "October"
+    },
+    {
+      "name": "Ria Jham",
+      "day": 11,
+      "month": "October"
+    },
+    {
+      "name": "Anushka Moghe",
+      "day": 11,
+      "month": "October"
+    },
+    {
+      "name": "Nidhi Priya",
+      "day": 11,
+      "month": "October"
+    },
+    {
+      "name": "Dharmendra Batra",
+      "day": 17,
+      "month": "October"
+    },
+    {
+      "name": "Eeshan Deo",
+      "day": 20,
+      "month": "October"
+    },
+    {
+      "name": "Apoorva Soni",
+      "day": 24,
+      "month": "October"
+    },
+    {
+      "name": "Ishan Maitreya",
+      "day": 25,
+      "month": "October"
+    },
+    {
+      "name": "Piyush Rane",
+      "day": 26,
+      "month": "October"
+    },
+    {
+      "name": "Akshat Goyal",
+      "day": 27,
+      "month": "October"
+    },
+    {
+      "name": "Vibhav Tomar",
+      "day": 27,
+      "month": "October"
+    },
+    {
+      "name": "Pushpendra Singh Rana",
+      "day": 28,
+      "month": "October"
+    },
+    {
+      "name": "Nipun Suneja",
+      "day": 29,
+      "month": "October"
+    },
+    {
+      "name": "Saksham Suneja",
+      "day": 29,
+      "month": "October"
+    },
+    {
+      "name": "Ankita Bhutani",
+      "day": 1,
+      "month": "November"
+    },
+    {
+      "name": "Achint Aggarwal",
+      "day": 1,
+      "month": "November"
+    },
+    {
+      "name": "Parth Bhutyani",
+      "day": 2,
+      "month": "November"
+    },
+    {
+      "name": "Ayushi Goyal",
+      "day": 5,
+      "month": "November"
+    },
+    {
+      "name": "Naman Khandelwal",
+      "day": 6,
+      "month": "November"
+    },
+    {
+      "name": "Simran Rathore",
+      "day": 7,
+      "month": "November"
+    },
+    {
+      "name": "Tanya Goyal",
+      "day": 7,
+      "month": "November"
+    },
+    {
+      "name": "Prateek Agarwal",
+      "day": 8,
+      "month": "November"
+    },
+    {
+      "name": "Shruti Kumari",
+      "day": 12,
+      "month": "November"
+    },
+    {
+      "name": "Ayush Nagpal",
+      "day": 17,
+      "month": "November"
+    },
+    {
+      "name": "Harshita Shrotriy",
+      "day": 24,
+      "month": "November"
+    },
+    {
+      "name": "Ayush Batra",
+      "day": 24,
+      "month": "November"
+    },
+    {
+      "name": "Manoj Nagpal",
+      "day": 27,
+      "month": "November"
+    },
+    {
+      "name": "Sanjali Agrawal",
+      "day": 29,
+      "month": "November"
+    },
+    {
+      "name": "Saksham Jain mentor",
+      "day": 7,
+      "month": "December"
+    },
+    {
+      "name": "Sparsh Pankaj",
+      "day": 12,
+      "month": "December"
+    },
+    {
+      "name": "Lavanya Aneja",
+      "day": 13,
+      "month": "December"
+    },
+    {
+      "name": "Himanshi Ghai",
+      "day": 14,
+      "month": "December"
+    },
+    {
+      "name": "Arpit Jain",
+      "day": 19,
+      "month": "December"
+    },
+    {
+      "name": "Shresth Gupta",
+      "day": 22,
+      "month": "December",
+      "year": 1999
+    },
+    {
+      "name": "Anushi Agrawal",
+      "day": 23,
+      "month": "December",
+      "year": 1999
+    },
+    {
+      "name": "Poonam Suneja Bua",
+      "day": 25,
+      "month": "December",
+      "year": 1977
+    },
+    {
+      "name": "Shubham Sachdeva",
+      "day": 25,
+      "month": "December",
+      "year": 1997
+    },
+    {
+      "name": "Harshit Batra",
+      "day": 25,
+      "month": "December",
+      "year": 1999
+    }
+  ];
+// =================================
+
+const MONTHS = ["January","February","March","April","May","June",
+  "July","August","September","October","November","December"];
+const COLORS = ["#ff6b9d","#ffd166","#06d6a0","#4cc9f0","#b388ff","#ff9e6d","#80ed99"];
+
+function initials(name){
+  const p = name.trim().split(/\s+/);
+  return ((p[0]?.[0]||"") + (p[1]?.[0]||"")).toUpperCase();
+}
+function colorFor(name){
+  let h=0; for(const c of name) h=(h*31+c.charCodeAt(0))>>>0;
+  return COLORS[h%COLORS.length];
+}
+// days from today until next occurrence of this birthday
+function daysUntil(day, monthIdx){
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  let next = new Date(today.getFullYear(), monthIdx, day);
+  if(next < today) next = new Date(today.getFullYear()+1, monthIdx, day);
+  return Math.round((next - today)/86400000);
+}
+// days since the most recent past occurrence of this birthday
+function daysSince(day, monthIdx){
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  let prev = new Date(today.getFullYear(), monthIdx, day);
+  if(prev > today) prev = new Date(today.getFullYear()-1, monthIdx, day);
+  return Math.round((today - prev)/86400000);
+}
+
+function render(){
+  const now = new Date();
+  document.getElementById("todayDate").textContent =
+    now.toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+  const enriched = birthdays.map(b=>{
+    const mi = MONTHS.indexOf(b.month);
+    return {...b, monthIdx: mi, diff: daysUntil(b.day, mi), since: daysSince(b.day, mi)};
+  });
+
+  const todays = enriched.filter(b=>b.diff===0);
+  const upcoming = enriched.filter(b=>b.diff>0 && b.diff<=30).sort((a,b)=>a.diff-b.diff);
+  const passed = enriched.filter(b=>b.since>0 && b.since<=7).sort((a,b)=>a.since-b.since);
+
+  // TODAY
+  const tl = document.getElementById("todayList");
+  tl.innerHTML = todays.length ? todays.map(b=>cardHTML(b,'today')).join("")
+    : '<div class="empty">No birthdays today.</div>';
+
+  // UPCOMING
+  const ul = document.getElementById("upcomingList");
+  ul.innerHTML = upcoming.length ? upcoming.map(b=>cardHTML(b,'soon')).join("")
+    : '<div class="empty">Nothing in the next 30 days.</div>';
+
+  // PASSED
+  const pl = document.getElementById("passedList");
+  pl.innerHTML = passed.length ? passed.map(b=>cardHTML(b,'passed')).join("")
+    : '<div class="empty">None in the last 7 days.</div>';
+
+  notify(todays, upcoming);
+}
+
+function cardHTML(b, type){
+  let when, cls = type;
+  if(type==='today'){ when = "Today 🎉"; }
+  else if(type==='passed'){ when = b.since===1 ? "Yesterday" : `${b.since} days ago`; }
+  else { when = b.diff===1 ? "Tomorrow" : `in ${b.diff} days`; cls='soon'; }
+  const cardCls = type==='today' ? 'today' : type==='passed' ? 'passed' : '';
+  return `<div class="card ${cardCls}">
+    <div class="avatar" style="background:${colorFor(b.name)}">${initials(b.name)}</div>
+    <div class="info">
+      <div class="name">${b.name}</div>
+      <div class="meta">${b.month} ${b.day}</div>
+    </div>
+    <div class="badge ${cls}">${when}</div>
+  </div>`;
+}
+
+function notify(todays, upcoming){
+  if(!("Notification" in window)) return;
+  const fire = ()=>{
+    if(Notification.permission!=="granted") return;
+    if(todays.length){
+      new Notification("🎂 Birthday today!", {body: todays.map(b=>b.name).join(", ")});
+    }
+    const tomorrow = upcoming.filter(b=>b.diff===1);
+    if(tomorrow.length){
+      new Notification("🎈 Birthday tomorrow", {body: tomorrow.map(b=>b.name).join(", ")});
+    }
+  };
+  if(Notification.permission==="granted") fire();
+  else if(Notification.permission!=="denied")
+    Notification.requestPermission().then(p=>{ if(p==="granted") fire(); });
+}
+
+render();
+</script>
+</body>
+</html>
