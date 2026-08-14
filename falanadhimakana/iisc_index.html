@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IISc index — Ayush Batra</title>
+<meta name="description" content="A working index of IISc, CSA and KIAC links, plus research reading.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#E9EBEE;
+    --ink:#10192B;
+    --muted:#5D687A;
+    --rule:#C7CDD6;
+    --accent:#125B63;
+    --field:#FFFFFF;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --paper:#0E1520;
+      --ink:#DFE4EC;
+      --muted:#8A96A8;
+      --rule:#26313F;
+      --accent:#6FC7CE;
+      --field:#141D2A;
+    }
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    padding:0 1.25rem 5rem;
+    background:var(--paper);
+    color:var(--ink);
+    font:400 15px/1.55 "IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
+  }
+  .wrap{max-width:60rem;margin:0 auto}
+
+  /* Masthead */
+  header{padding:3.25rem 0 1.25rem;border-bottom:1.5px solid var(--ink)}
+  h1{
+    font:400 clamp(2.4rem,7vw,3.6rem)/0.95 "Instrument Serif",Georgia,serif;
+    margin:0 0 .35rem;letter-spacing:-.01em;
+  }
+  h1 em{font-style:italic;color:var(--accent)}
+  .sub{
+    font:400 12px/1.5 "IBM Plex Mono",ui-monospace,monospace;
+    color:var(--muted);text-transform:uppercase;letter-spacing:.11em;margin:0;
+  }
+
+  /* Filter */
+  .filter{display:flex;align-items:baseline;gap:.9rem;flex-wrap:wrap;margin:1.5rem 0 .1rem}
+  #q{
+    flex:1 1 16rem;min-width:0;
+    padding:.6rem .8rem;
+    background:var(--field);
+    border:1.5px solid var(--rule);border-radius:2px;
+    color:var(--ink);
+    font:400 15px/1.2 "IBM Plex Sans",sans-serif;
+  }
+  #q:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+  #count{font:400 12px/1 "IBM Plex Mono",monospace;color:var(--muted);white-space:nowrap}
+
+  /* Sections */
+  section{margin-top:2.75rem}
+  .eyebrow{
+    display:flex;align-items:baseline;gap:.75rem;
+    padding-bottom:.4rem;border-bottom:1px solid var(--rule);
+  }
+  .eyebrow h2{
+    font:500 11px/1 "IBM Plex Mono",monospace;
+    text-transform:uppercase;letter-spacing:.16em;color:var(--accent);margin:0;
+  }
+  .eyebrow span{font-size:12.5px;color:var(--muted)}
+
+  /* Rows */
+  a.row{
+    display:grid;grid-template-columns:minmax(0,20rem) 1fr;gap:.25rem 1.25rem;
+    padding:.62rem 0 .62rem .8rem;
+    border-bottom:1px solid var(--rule);
+    border-left:2px solid transparent;
+    color:inherit;text-decoration:none;
+  }
+  a.row:hover,a.row:focus-visible{
+    border-left-color:var(--accent);
+    background:color-mix(in srgb,var(--accent) 7%,transparent);
+    outline:none;
+  }
+  a.row:hover .t,a.row:focus-visible .t{color:var(--accent)}
+  .t{font-weight:500;transition:color .08s ease}
+  .n{color:var(--muted);font-size:13.5px}
+  .n b{font:400 12px/1 "IBM Plex Mono",monospace;color:var(--ink);font-weight:500}
+  @media (max-width:38rem){a.row{grid-template-columns:1fr}}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+  /* Contacts + footer */
+  .card{
+    margin-top:2.75rem;padding:1rem 1.1rem;
+    border:1px solid var(--rule);border-left:2px solid var(--accent);border-radius:2px;
+    font:400 13.5px/1.7 "IBM Plex Mono",monospace;color:var(--muted);
+  }
+  .card b{color:var(--ink);font-weight:500}
+  .card a{color:var(--accent)}
+  footer{margin-top:2.5rem;font:400 12px/1.6 "IBM Plex Mono",monospace;color:var(--muted)}
+  .empty{padding:2rem 0;color:var(--muted);display:none}
+  .empty.on{display:block}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>IISc <em>index</em></h1>
+    <p class="sub">MTech (Research) · CSA + KIAC · personal bookmarks</p>
+  </header>
+
+  <div class="filter">
+    <input id="q" type="search" placeholder="Filter links — try “handbook”, “cluster”, “theory”" autocomplete="off" aria-label="Filter links">
+    <span id="count"></span>
+  </div>
+  <p class="empty" id="empty">Nothing matches that. Clear the filter to see everything.</p>
+
+  <section>
+    <div class="eyebrow"><h2>Rules</h2><span>What actually governs the degree</span></div>
+    <a class="row" href="https://www.iisc.ac.in/wp-content/uploads/2026/08/Student-Information-Handbook-2026-August.pdf"><span class="t">Student Information Handbook 2026</span><span class="n">RTP credits, grading, leave, fees, thesis rules</span></a>
+    <a class="row" href="https://www.csa.iisc.ac.in/academics-all/degree-programs/"><span class="t">CSA degree programs</span><span class="n">RTP rules + approved list for the mandatory math course</span></a>
+    <a class="row" href="https://www.iisc.ac.in/wp-content/uploads/2026/08/SoI-Aug-Dec-2026-Term.pdf"><span class="t">Scheme of Instruction, Aug–Dec 2026</span><span class="n">Every course offered institute-wide</span></a>
+    <a class="row" href="https://www.csa.iisc.ac.in/academics-all/courses/descriptions/"><span class="t">CSA course descriptions</span><span class="n">Syllabus detail before you register</span></a>
+    <a class="row" href="https://www.csa.iisc.ac.in/academics-all/courses/time-table/"><span class="t">CSA time table</span><span class="n">Slot clashes</span></a>
+    <a class="row" href="https://www.iisc.ac.in/about/student-corner/"><span class="t">Student Corner</span><span class="n">Fees, transcripts, grievance, code of conduct</span></a>
+    <a class="row" href="https://www.iisc.ac.in/useful-forms/"><span class="t">Useful forms</span><span class="n">Course exemption, leave, everything administrative</span></a>
+  </section>
+
+  <section>
+    <div class="eyebrow"><h2>KIAC</h2><span>The centre funding you</span></div>
+    <a class="row" href="https://kiac.iisc.ac.in/academics/research-programmes/"><span class="t">Research programmes</span><span class="n">PhD and MTech (Res) structure, research areas</span></a>
+    <a class="row" href="https://kiac.iisc.ac.in/compute/"><span class="t">Mahamathi cluster</span><span class="n">SLURM, A100/H200 — access needs a formal application</span></a>
+    <a class="row" href="https://kiac.iisc.ac.in/wp-content/uploads/2023/04/AnnualReport-2024-25.pdf"><span class="t">Annual report 2024–25</span><span class="n">What KIAC funds: conference travel, visits, scholarships</span></a>
+    <a class="row" href="https://kiac.iisc.ac.in/people-all/faculty/"><span class="t">KIAC faculty</span><span class="n">Who's affiliated, across departments</span></a>
+    <a class="row" href="https://kiac.iisc.ac.in/people-all/students/"><span class="t">KIAC students</span><span class="n">Current cohort and fellows</span></a>
+    <a class="row" href="https://kiac.iisc.ac.in/news-and-events/"><span class="t">News and events</span><span class="n">Talks and centre announcements</span></a>
+  </section>
+
+  <section>
+    <div class="eyebrow"><h2>CSA</h2><span>Department and the theory group</span></div>
+    <a class="row" href="https://www.csa.iisc.ac.in/theoretical-computer-science/"><span class="t">Theory research stream</span><span class="n">The TCS group and its people</span></a>
+    <a class="row" href="https://www.csa.iisc.ac.in/people-all/faculty/"><span class="t">CSA faculty</span><span class="n">Directory with research areas</span></a>
+    <a class="row" href="https://www.csa.iisc.ac.in/academics-all/resources/current-students-resources/"><span class="t">Current students resources</span><span class="n">Departmental forms and internal links</span></a>
+    <a class="row" href="https://www.csa.iisc.ac.in/newweb/wp-content/uploads/2024/03/Information-Brochure-2023.pdf"><span class="t">CSA information brochure</span><span class="n">Programme structure, labs, facilities in one PDF</span></a>
+    <a class="row" href="https://www.csa.iisc.ac.in/facilities/computing-facilities/"><span class="t">CSA computing facilities</span><span class="n">Department machines and lab access</span></a>
+    <a class="row" href="https://www.csa.iisc.ac.in/~deepakd/csa-web/prospective-students/mtech-res.html"><span class="t">MTech (Res) overview</span><span class="n">Credits, stipend, thesis expectations</span></a>
+  </section>
+
+  <section>
+    <div class="eyebrow"><h2>Campus</h2><span>Day to day</span></div>
+    <a class="row" href="http://hostel.iisc.ernet.in/hostel/"><span class="t">Hostels and mess</span><span class="n">Room, mess registration, dues</span></a>
+    <a class="row" href="http://www.library.iisc.ac.in/"><span class="t">JRD Tata Memorial Library</span><span class="n">Journal access, remote login</span></a>
+    <a class="row" href="https://healthcentre.iisc.ac.in/"><span class="t">Health Centre</span><span class="n">Timings and appointments</span></a>
+    <a class="row" href="https://iiscgym.iisc.ac.in/"><span class="t">Gymkhana</span><span class="n">Courts, gym, clubs</span></a>
+    <a class="row" href="http://scouncil.iisc.ac.in/"><span class="t">Students' Council</span><span class="n">Events and student representation</span></a>
+    <a class="row" href="https://www.iisc.ac.in/about/general-information/campus-map/"><span class="t">Campus map</span><span class="n">Finding buildings</span></a>
+    <a class="row" href="http://occap.iisc.ac.in/"><span class="t">Placement office (OCCaP)</span><span class="n">Internships and placement cycle</span></a>
+  </section>
+
+  <section>
+    <div class="eyebrow"><h2>Reading</h2><span>How to do research — the five worth finishing</span></div>
+    <a class="row" href="https://www.cs.virginia.edu/~robins/YouAndYourResearch.pdf"><span class="t">You and Your Research</span><span class="n"><b>Hamming · 1 hr</b> — why some people do great work</span></a>
+    <a class="row" href="https://www.weizmann.ac.il/mcb/alon/sites/mcb.UriAlon/files/uploads/nurturing/howtochoosegoodproblem.pdf"><span class="t">How to choose a good scientific problem</span><span class="n"><b>Alon · 3 pp</b> — feasibility against interest</span></a>
+    <a class="row" href="https://windowsontheory.org/2015/11/03/advice-for-the-budding-theorist/"><span class="t">Advice for the budding theorist</span><span class="n"><b>Barak · 20 min</b> — the TCS-specific version</span></a>
+    <a class="row" href="http://www.sigcomm.org/sites/default/files/ccr/papers/2007/July/1273445-1273458.pdf"><span class="t">How to read a paper</span><span class="n"><b>Keshav · 2 pp</b> — the three-pass method</span></a>
+    <a class="row" href="https://www.cs.cmu.edu/~mblum/research/pdf/grad.html"><span class="t">Advice to a beginning graduate student</span><span class="n"><b>Blum · 15 min</b> — the four R's</span></a>
+    <a class="row" href="https://people.cs.umass.edu/~emery/misc/how-to.pdf"><span class="t">How to do research at the MIT AI Lab</span><span class="n"><b>Chapman · browse</b> — notebooks, advisors, emotional factors</span></a>
+    <a class="row" href="https://www.cs.jhu.edu/~mdredze/publications/HowtoBeaSuccessfulPhDStudent.pdf"><span class="t">How to be a successful PhD student</span><span class="n"><b>Dredze &amp; Wallach · 45 min</b></span></a>
+    <a class="row" href="https://michaelnielsen.org/blog/principles-of-effective-research/"><span class="t">Principles of effective research</span><span class="n"><b>Nielsen · 45 min</b></span></a>
+    <a class="row" href="https://terrytao.wordpress.com/career-advice/"><span class="t">Career advice</span><span class="n"><b>Tao · dip in</b> — short posts, mathematician's view</span></a>
+    <a class="row" href="https://journals.biologists.com/jcs/article/121/11/1771/30038"><span class="t">The importance of stupidity in scientific research</span><span class="n"><b>Schwartz · 1 p</b></span></a>
+    <a class="row" href="https://pgbovine.net/PhD-memoir.htm"><span class="t">The Ph.D. Grind</span><span class="n"><b>Guo · a weekend</b> — what six years actually looks like</span></a>
+    <a class="row" href="https://www.microsoft.com/en-us/research/video/how-to-write-a-great-research-paper-3/"><span class="t">How to write a great research paper</span><span class="n"><b>Peyton Jones · 1 hr talk</b></span></a>
+    <a class="row" href="https://github.com/shaily99/advice"><span class="t">shaily99/advice</span><span class="n">The aggregator, for when you want more</span></a>
+  </section>
+
+  <div class="card">
+    <b>KIAC office</b> · office.kiac@iisc.ac.in · 080 2293 3799 · Room 406, CDS/SERC building<br>
+    <b>Cluster access</b> · <a href="mailto:server.kiac@iisc.ac.in">server.kiac@iisc.ac.in</a> — apply early, approval takes time
+  </div>
+
+  <footer>Links checked August 2026. Institute PDFs get re-uploaded each year, so the handbook and SoI URLs go stale first.</footer>
+
+</div>
+
+<script>
+(function(){
+  var q = document.getElementById('q'),
+      count = document.getElementById('count'),
+      empty = document.getElementById('empty'),
+      rows = Array.prototype.slice.call(document.querySelectorAll('a.row')),
+      sections = Array.prototype.slice.call(document.querySelectorAll('section'));
+
+  rows.forEach(function(r){ r.dataset.hay = (r.textContent + ' ' + r.href).toLowerCase(); });
+
+  function render(){
+    var term = q.value.trim().toLowerCase(), shown = 0;
+    rows.forEach(function(r){
+      var hit = !term || r.dataset.hay.indexOf(term) > -1;
+      r.hidden = !hit;
+      if (hit) shown++;
+    });
+    sections.forEach(function(s){
+      s.hidden = !s.querySelector('a.row:not([hidden])');
+    });
+    empty.classList.toggle('on', shown === 0);
+    count.textContent = term ? shown + ' of ' + rows.length : rows.length + ' links';
+  }
+
+  q.addEventListener('input', render);
+  document.addEventListener('keydown', function(e){
+    if (e.key === '/' && document.activeElement !== q){ e.preventDefault(); q.focus(); }
+    if (e.key === 'Escape' && document.activeElement === q){ q.value = ''; render(); q.blur(); }
+  });
+  render();
+})();
+</script>
+</body>
+</html>
